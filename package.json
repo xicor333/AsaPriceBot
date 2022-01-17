@@ -1,0 +1,27 @@
+{
+  "name": "asapricebot",
+  "version": "0.0.1",
+  "description": "Price bot for Algorand standard assets",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/xicor333/AsaPriceBot.git"
+  },
+  "keywords": [
+    "ASA",
+    "Algorand",
+    "Discord"
+  ],
+  "author": "xicor333",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/xicor333/AsaPriceBot/issues"
+  },
+  "homepage": "https://github.com/xicor333/AsaPriceBot#readme",
+  "dependencies": {
+    "discord.js": "^13.6.0"
+  }
+}
