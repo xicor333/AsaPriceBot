@@ -6,6 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "type": "module",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/xicor333/AsaPriceBot.git"
@@ -22,6 +23,9 @@
   },
   "homepage": "https://github.com/xicor333/AsaPriceBot#readme",
   "dependencies": {
-    "discord.js": "^13.6.0"
+    "@discordjs/rest": "^0.2.0-canary.0",
+    "discord-api-types": "^0.26.1",
+    "discord.js": "^13.6.0",
+    "got": "^12.0.1"
   }
 }
