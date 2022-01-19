@@ -26,6 +26,10 @@ function getSearchNameCmd(query_name)
 {
   return TINYCHART_URL+`/assets/search?query=${query_name}`
 }
+function getAssetCmd(asset_id)
+{
+  return TINYCHART_URL+`/asset/${asset_id}`
+}
 function getProvider(inputDex,asset)
 {
   //get the asset's prefered dex if it's not specified
@@ -58,6 +62,30 @@ function timeoutPromise(){
     setTimeout(reject,10000,"Timeout grabbing data, Try again")
   });
 }
+function getAsset(idOrName)
+{
+  if(isNaN(idOrName))
+    return getAssetByName(idOrName);
+  else
+    return getAssetById(idOrName);
+}
+function getAssetById(id)
+{
+  return runCommand(getAssetCmd(id)).then((asset)=>{
+    //TODO currently returning a 404 when there is a bad asset id
+    return asset;
+  });
+}
+//get the asset by name
+function getAssetByName(name)
+{
+  return runCommand(getSearchNameCmd(name)).then((assets)=>{
+    //if it returns no assets, respond with an error
+    if(!assets || assets.length<1)
+      throw new Error(`No Asset found for ${asa}`)
+    return assets[0];
+  })
+}
 const commands = [
   {
   name:'price',
@@ -77,6 +105,18 @@ const commands = [
     }
   ]
 },
+{
+  name:'info',
+  description:'Replies with info about the specified ASA',
+  options:[
+    {
+      name:'asa',
+      description:'asa name or ID',
+      required:true,
+      type:Constants.ApplicationCommandOptionTypes.STRING
+    }
+  ]
+}
 // {
 //   name:'chart',
 //   description: 'Replies with the chart for the specified ASA',
@@ -142,13 +182,8 @@ client.on('interactionCreate', async interaction => {
 
     await interaction.deferReply();
     try{
-      //get the asset by name
-      runCommand(getSearchNameCmd(asa)).then((assets)=>{
-        //if it returns no assets, respond with an error
-        if(!assets || assets.length<1)
-          throw new Error(`No Asset found for ${asa}`)
-        return assets[0];
-      }).then(async (targetAsset)=>{
+      
+      getAssetByName(asa).then(async (targetAsset)=>{
         const provider = getProvider(dex,targetAsset)
         const pools = await runCommand(getPoolsCmd(targetAsset.id,provider))
         return {provider,targetAsset,pools}
@@ -177,13 +212,29 @@ client.on('interactionCreate', async interaction => {
       interaction.editReply("Unknown Error");
       console.error(error);
     }
-    
-    // await new Promise(resolve => setTimeout(resolve,5000));
-
-    // interaction.editReply({
-    //   content:'The price is: 1'
-    // });
+    return;
   }
+  if(commandName === 'info')
+  {
+    const asa= options.getString('asa');
+
+    await interaction.deferReply();
+    getAsset(asa).then((asset)=>{
+      interaction.editReply(
+`ID: ${asset.id}
+Name: ${asset.name}
+Ticker: ${asset.ticker}
+Url: ${asset.url}
+Verified: ${asset.verified?"Yes":"No"}
+Clawback: ${asset.clawback?"Yes":"No"}
+Freeze: ${asset.freeze?"Yes":"No"}`
+        )
+    }).catch((errorMsg)=>{
+      console.log(errorMsg)
+      interaction.editReply(errorMsg.toString())
+    })
+  }
+
 });
 
 client.login(Token);
