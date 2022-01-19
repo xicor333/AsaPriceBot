@@ -37,7 +37,7 @@ function getProvider(inputDex,asset)
     return getPreferredProvider(asset)
   else
   {
-    if(!["TM","T2","HS"].includes(provider))
+    if(!["TM","T2","HS"].includes(inputDex))
     {  
       throw new Error("Invalid Dex: Options are: TM,T2,HS")
     }
