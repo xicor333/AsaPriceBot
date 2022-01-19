@@ -154,7 +154,7 @@ const discordRest = new REST({ version: '9' }).setToken(Token);
     }
     else
     {
-       await rest.put(
+       await discordRest.put(
         Routes.applicationCommands(APP_ID),
         { body: commands },
       );
