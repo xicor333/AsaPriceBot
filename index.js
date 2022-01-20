@@ -173,8 +173,8 @@ client.on("interactionCreate", async (interaction) => {
             const pool = info.pools[i];
             //pool asset 2 is null/0 when it's algo
             if (!pool.asset_2_id) {
-              const pctChange = (pool.price - pool.price24h) / pool.price24h;
-              const pctChangeStr = pctChange.toPrecision(2);
+              const pctChange = ((pool.price - pool.price24h) / pool.price24h) * 100;
+              const pctChangeStr = pctChange.toFixed(2);
               const priceStr = pool.price.toPrecision(4);
               interaction.editReply(
                 `${info.targetAsset.ticker} Price on ${info.provider} is ${priceStr} Algo (${pctChangeStr}%)`
@@ -202,12 +202,15 @@ client.on("interactionCreate", async (interaction) => {
     await interaction.deferReply();
     getAsset(asa)
       .then((asset) => {
+        console.log(asset)
         interaction.editReply(
-          `ID: ${asset.id}\n``Name: ${asset.name}\n``Ticker: ${asset.ticker}\n``Url: ${asset.url}\n``Verified: ${
-            asset.verified ? "Yes" : "No"
-          }\n``Clawback: ${asset.clawback ? "Yes" : "No"}\n``Freeze: ${
-            asset.freeze ? "Yes" : "No"
-          }\n`
+          `ID: ${asset.id}\n` +
+          `Name: ${asset.name}\n` +
+          `Ticker: ${asset.ticker}\n` +
+          `Url: ${asset.url}\n` +
+          `Verified: ${asset.verified ? "Yes" : "No"}\n` +
+          `Clawback: ${asset.clawback ? "Yes" : "No"}\n` +
+          `Freeze: ${asset.freeze ? "Yes" : "No"}\n`
         );
       })
       .catch((errorMsg) => {
