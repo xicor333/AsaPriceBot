@@ -1,0 +1,10 @@
+{
+  "compilerOptions": {
+    "outDir": "out",
+    "allowJs": true,
+    "target": "es6",
+    "moduleResolution": "node",
+    "sourceMap": true
+  },
+  "include": ["./src/**/*"]
+}

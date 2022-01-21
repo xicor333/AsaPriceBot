@@ -6,7 +6,8 @@ const TINYCHART_URL = process.env.TINYCHART_API_URL;
 import { REST } from "@discordjs/rest";
 import { Routes } from "discord-api-types/v9";
 import { Client, Intents, Constants } from "discord.js";
-import axios from "axios";
+import { Asset } from "./tinychart";
+import axios, { AxiosError, AxiosResponse } from "axios";
 
 const client = new Client({ intents: [Intents.FLAGS.GUILDS] });
 
@@ -16,16 +17,16 @@ const baseOpts = {
   },
 };
 
-function getPoolsCmd(asset_id, provider_id) {
+function getPoolsCmd(asset_id, provider_id): string {
   return TINYCHART_URL + `/asset/${asset_id}/pools/${provider_id}`;
 }
-function getSearchNameCmd(query_name) {
+function getSearchNameCmd(query_name): string {
   return TINYCHART_URL + `/assets/search?query=${query_name}`;
 }
-function getAssetCmd(asset_id) {
+function getAssetCmd(asset_id): string {
   return TINYCHART_URL + `/asset/${asset_id}`;
 }
-function getProvider(inputDex, asset) {
+function getProvider(inputDex, asset): string {
   //get the asset's prefered dex if it's not specified
   if (!inputDex) return getPreferredProvider(asset);
   else {
@@ -40,31 +41,34 @@ function getPreferredProvider(asset) {
   else if (asset.hs) return "HS";
   return "TM";
 }
+function handleAxiosRequest(url): Promise<any> {
+  return axios.get(url, baseOpts).then((result) => result.data);
+}
 // give each command 10s before we just skip it and error out
-function runCommand(url) {
-  return Promise.race([timeoutPromise(), axios.get(url, baseOpts)]);
+function runCommand(url): Promise<any> {
+  return Promise.race([timeoutPromise(), handleAxiosRequest(url)]);
 }
 function timeoutPromise() {
   return new Promise((resolve, reject) => {
     setTimeout(reject, 10000, "Timeout grabbing data, Try again");
   });
 }
-function getAsset(idOrName) {
+function getAsset(idOrName): Promise<Asset> {
   if (isNaN(idOrName)) return getAssetByName(idOrName);
   else return getAssetById(idOrName);
 }
-function getAssetById(id) {
+function getAssetById(id): Promise<Asset> {
   return runCommand(getAssetCmd(id)).then((asset) => {
     //TODO currently returning a 404 when there is a bad asset id
     return asset;
   });
 }
 //get the asset by name
-function getAssetByName(name) {
+function getAssetByName(name): Promise<Asset> {
   return runCommand(getSearchNameCmd(name)).then((assets) => {
     //if it returns no assets, respond with an error
     if (!assets || assets.length < 1)
-      throw new Error(`No Asset found for ${asa}`);
+      throw new Error(`No Asset found for ${name}`);
     return assets[0];
   });
 }
@@ -152,8 +156,8 @@ client.on("interactionCreate", async (interaction) => {
   const { commandName, options } = interaction;
 
   if (commandName === "price") {
-    const asa = options.getString("asa");
-    const dex = options.getString("dex");
+    const asa: string = options.getString("asa");
+    const dex: string | null = options.getString("dex");
 
     await interaction.deferReply();
     try {
@@ -208,8 +212,8 @@ client.on("interactionCreate", async (interaction) => {
             `Ticker: ${asset.ticker}\n` +
             `Url: ${asset.url}\n` +
             `Verified: ${asset.verified ? "Yes" : "No"}\n` +
-            `Clawback: ${asset.clawback ? "Yes" : "No"}\n` +
-            `Freeze: ${asset.freeze ? "Yes" : "No"}\n`
+            `Clawback: ${asset.has_clawback ? "Yes" : "No"}\n` +
+            `Freeze: ${asset.has_freeze ? "Yes" : "No"}\n`
         );
       })
       .catch((errorMsg) => {
