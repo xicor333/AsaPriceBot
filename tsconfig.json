@@ -4,7 +4,10 @@
     "allowJs": true,
     "target": "es6",
     "moduleResolution": "node",
-    "sourceMap": true
+    "module": "ES6",
+    "sourceMap": true,
+    "esModuleInterop": true,
+    "rootDir": "src"
   },
-  "include": ["./src/**/*"]
+  "include": ["src/**/*", "out/**/*"]
 }
