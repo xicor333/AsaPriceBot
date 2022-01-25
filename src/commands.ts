@@ -33,6 +33,11 @@ export const commands = [
     description: "Replies with a list of commands",
   },
   {
+    name: "price",
+    description: "Replies with the price for the specified ASA",
+    options: [asaArgument, dexArgument],
+  },
+  {
     name: "tcp",
     description: "Replies with the price for the specified ASA",
     options: [asaArgument, dexArgument],
@@ -41,6 +46,11 @@ export const commands = [
     name: "tcprice",
     description: "Replies with the price for the specified ASA",
     options: [asaArgument, dexArgument],
+  },
+  {
+    name: "info",
+    description: "Replies with info about the specified ASA",
+    options: [asaArgument],
   },
   {
     name: "tci",

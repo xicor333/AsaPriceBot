@@ -5,7 +5,7 @@ import { Asset } from "../tinychart";
 
 export class InfoCommand extends BasicCommand {
   constructor() {
-    super(["tci", "tcInfo"]);
+    super(["tci", "tcInfo","info"]);
   }
   async runCommand(interaction: CommandInteraction): Promise<void> {
     const { commandName, options } = interaction;
