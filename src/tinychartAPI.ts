@@ -11,13 +11,13 @@ const baseOpts = {
 
 export module TinychartAPI {
   export function getPoolsCmd(asset_id, provider_id): string {
-    return TINYCHART_URL + `/asset/${asset_id}/pools/${provider_id}`;
+    return encodeURI(TINYCHART_URL + `/asset/${asset_id}/pools/${provider_id}`);
   }
   export function getSearchNameCmd(query_name): string {
-    return TINYCHART_URL + `/assets/search?query=${query_name}`;
+    return encodeURI(TINYCHART_URL + `/assets/search?query=${query_name}`);
   }
   export function getAssetCmd(asset_id): string {
-    return TINYCHART_URL + `/asset/${asset_id}`;
+    return encodeURI(TINYCHART_URL + `/asset/${asset_id}`);
   }
   export function getProvider(inputDex, asset): string {
     //get the asset's prefered dex if it's not specified
