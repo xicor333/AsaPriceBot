@@ -8,11 +8,17 @@ export class HelpCommand extends BasicCommand {
     return this.m_names.includes(name);
   }
   runCommand(interaction: CommandInteraction): Promise<void> {
-    return interaction.reply(
-      "Available Commands:\n" +
-        "Help: /help /tch or /tchelp\n" +
-        "Price: /tcp or /tcprice\n" +
-        "Info: /tci or /tcinfo"
-    );
+
+    const embed = {
+        title:"Available Commands",
+        fields:[
+            {name:"Help",value:"/help /tch or /tchelp",inline:true},
+            {name:"Price",value:"/tcp or /tcprice",inline:true},
+            {name:"Info",value:"/tci or /tcinfo",inline:true},
+        ],
+        
+    }
+
+    return interaction.reply({embeds:[embed]});
   }
 }

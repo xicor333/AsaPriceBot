@@ -1,4 +1,4 @@
-import { CommandInteraction } from "discord.js";
+import { CommandInteraction, MessageEmbed } from "discord.js";
 import { BasicCommand } from "./BasicCommand";
 import { TinychartAPI } from "../tinychartAPI";
 import { Asset, Pool } from "../tinychart";
@@ -36,9 +36,21 @@ export class PriceCommand extends BasicCommand {
         const pctChange = ((pool.price - pool.price24h) / pool.price24h) * 100;
         const pctChangeStr = (pctChange<0?"":"+")+pctChange.toFixed(2);
         const priceStr = pool.price.toPrecision(4);
-        interaction.editReply(
-          `${info.targetAsset.ticker} Price on ${info.provider} is ${priceStr} Ⱥ (${pctChangeStr}%)`
-        );
+        const embed = {
+            title:`${info.targetAsset.name}`,
+            fields:[
+                {name:"Asset",value:`${info.targetAsset.ticker}`,inline:true},
+                {name:"Price",value:`${priceStr}Ⱥ`,inline:true},
+                {name:"Change",value:`${pctChangeStr}%`,inline:true}
+            ],
+            footer:{
+                text:`From ${info.provider}`
+            }
+        }
+        // interaction.editReply(
+        //   `${info.targetAsset.ticker} Price on ${info.provider} is ${priceStr} <a>(${pctChangeStr}%)`
+        // );
+        interaction.editReply({embeds:[embed]});
       });
   }
 }

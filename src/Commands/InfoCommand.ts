@@ -13,15 +13,20 @@ export class InfoCommand extends BasicCommand {
 
     await interaction.deferReply();
     return TinychartAPI.getAsset(asa).then((asset) => {
-      interaction.editReply(
-        `ID: ${asset.id}\n` +
-          `Name: ${asset.name}\n` +
-          `Ticker: ${asset.ticker}\n` +
-          `Url: ${asset.url}\n` +
-          `Verified: ${asset.verified ? "Yes" : "No"}\n` +
-          `Clawback: ${asset.has_clawback ? "Yes" : "No"}\n` +
-          `Freeze: ${asset.has_freeze ? "Yes" : "No"}\n`
-      );
+        const embed = {
+            title:`Info For ${asset.name}`,
+            fields:[
+                {name:"ID",value:`${asset.id}`,inline:true},
+                {name:"Name",value:`${asset.name}`,inline:true},
+                {name:"Ticker",value:`${asset.ticker}`,inline:true},
+                {name:"Verified",value:` ${asset.verified ? "Yes" : "No"}`,inline:true},
+                {name:"Clawback",value:` ${asset.has_clawback ? "Yes" : "No"}`,inline:true},
+                {name:"Freeze",value:` ${asset.has_freeze ? "Yes" : "No"}`,inline:true},
+                {name:"Url",value:`${asset.url.length>0?asset.url:"No Url"}`},
+            ],
+
+        }
+      interaction.editReply({embeds:[embed]});
     });
   }
 }
