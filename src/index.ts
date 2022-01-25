@@ -11,14 +11,18 @@ import { AssetSocket } from "./AssetSocket";
 import { WSPool } from "./tinychart";
 import { TinychartAPI } from "./tinychartAPI";
 import { commands } from "./commands";
-import { BasicCommand } from './Commands/BasicCommand'
-import { InfoCommand } from './Commands/InfoCommand'
-import { HelpCommand } from './Commands/HelpCommand';
-import { PriceCommand } from './Commands/PriceCommand';
+import { BasicCommand } from "./Commands/BasicCommand";
+import { InfoCommand } from "./Commands/InfoCommand";
+import { HelpCommand } from "./Commands/HelpCommand";
+import { PriceCommand } from "./Commands/PriceCommand";
 
 const client = new Client({ intents: [Intents.FLAGS.GUILDS] });
 
-const slashCommands:BasicCommand[]=[new HelpCommand(),new InfoCommand(),new PriceCommand()]
+const slashCommands: BasicCommand[] = [
+  new HelpCommand(),
+  new InfoCommand(),
+  new PriceCommand(),
+];
 
 const discordRest = new REST({ version: "9" }).setToken(Token);
 
@@ -28,12 +32,12 @@ const discordRest = new REST({ version: "9" }).setToken(Token);
     // guild commands are instant, need to use these for testing purposes
     // the application commmands take up to an hour to propagate
     if (GUILD_ID) {
-      console.log("Adding Guild Commands")
+      console.log("Adding Guild Commands");
       await discordRest.put(Routes.applicationGuildCommands(APP_ID, GUILD_ID), {
         body: commands,
       });
     } else {
-      console.log("Adding application commands")
+      console.log("Adding application commands");
       await discordRest.put(Routes.applicationCommands(APP_ID), {
         body: commands,
       });
@@ -52,17 +56,18 @@ client.on("ready", () => {
 client.on("interactionCreate", async (interaction) => {
   if (!interaction.isCommand()) return;
 
-  const commandToRun = slashCommands.find((c) => c.checkCommandName(interaction.commandName));
-  if(!commandToRun){
+  const commandToRun = slashCommands.find((c) =>
+    c.checkCommandName(interaction.commandName)
+  );
+  if (!commandToRun) {
     interaction.reply("Invalid Command");
     return;
   }
-  
+
   commandToRun.runCommand(interaction).catch((errorMsg) => {
     console.log(errorMsg);
     interaction.editReply(errorMsg.toString());
-  })
-  
+  });
 });
 
 client.login(Token);

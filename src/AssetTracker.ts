@@ -3,7 +3,7 @@ import { Asset, Pool, WSPool } from "./tinychart";
 
 export interface TrackerTarget {
   id: string;
-  userId:string;
+  userId: string;
   gt?: number;
   lt?: number;
 }
@@ -20,14 +20,14 @@ export class AssetTracker {
   ) {
     this.m_asset = asset;
     this.m_targetReachedCallback = targetReachedCallback;
-    this.m_targets =[];
-    
+    this.m_targets = [];
+
     this.m_socket = new AssetSocket(pool, (pool: WSPool) => {
       this.wsCallback(pool);
     });
   }
-  assetId():string{
-    return this.m_asset.id;    
+  assetId(): string {
+    return this.m_asset.id;
   }
   wsCallback(pool: WSPool) {
     //check to see if any of our targets were reached
@@ -46,11 +46,10 @@ export class AssetTracker {
   addTarget(target: TrackerTarget) {
     this.m_targets.push(target);
   }
-  hasTargets():boolean{
-    return this.m_targets.length>0;
+  hasTargets(): boolean {
+    return this.m_targets.length > 0;
   }
-  hasTarget(target:TrackerTarget):boolean{
-      return this.m_targets.find(e=>e.id == target.id)!=undefined
+  hasTarget(target: TrackerTarget): boolean {
+    return this.m_targets.find((e) => e.id == target.id) != undefined;
   }
-
 }
