@@ -34,10 +34,10 @@ export class PriceCommand extends BasicCommand {
           );
         }
         const pctChange = ((pool.price - pool.price24h) / pool.price24h) * 100;
-        const pctChangeStr = pctChange.toFixed(2);
+        const pctChangeStr = (pctChange<0?"":"+")+pctChange.toFixed(2);
         const priceStr = pool.price.toPrecision(4);
         interaction.editReply(
-          `${info.targetAsset.ticker} Price on ${info.provider} is ${priceStr} Algo (${pctChangeStr}%)`
+          `${info.targetAsset.ticker} Price on ${info.provider} is ${priceStr} Ⱥ (${pctChangeStr}%)`
         );
       });
   }
