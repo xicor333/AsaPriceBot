@@ -5,7 +5,7 @@ import { Asset, Pool } from "../tinychart";
 
 export class PriceCommand extends BasicCommand {
   constructor() {
-    super(["tcp", "tcPrice","price"]);
+    super(["tcp", "tcprice","price"]);
   }
   async runCommand(interaction: CommandInteraction): Promise<void> {
     const { commandName, options } = interaction;
