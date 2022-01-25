@@ -2,7 +2,7 @@ import { CommandInteraction } from "discord.js";
 import { BasicCommand } from "./BasicCommand";
 export class HelpCommand extends BasicCommand {
   constructor() {
-    super(["help", "tch", "tcHelp"]);
+    super(["help", "tch", "tchelp"]);
   }
   checkCommandName(name: string): boolean {
     return this.m_names.includes(name);

@@ -25,7 +25,7 @@ export class PriceCommand extends BasicCommand {
       })
       .then((info) => {
         if (!info.pools || info.pools.length < 1)
-          throw new Error(`No pools found for ${info.targetAsset.ticker}`);
+          throw new Error(`No pools found for ${info.targetAsset.ticker} on ${info.provider}`);
         //find the algo -> asa pool and return the price on that pool
         const pool = TinychartAPI.getAlgoPool(info.pools);
         if (!pool) {
