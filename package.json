@@ -28,6 +28,8 @@
     "axios": "^0.25.0",
     "discord-api-types": "^0.26.1",
     "discord.js": "^13.6.0",
+    "dotenv": "^14.2.0",
+    "express": "^4.17.2",
     "prettier": "^2.5.1",
     "typescript": "^4.5.5",
     "ws": "^8.4.2"
@@ -36,6 +38,6 @@
     "node-fetch": "^3.2.0"
   },
   "resolutions": {
-    "node-fetch":"^3.1.1"
+    "node-fetch": "^3.1.1"
   }
 }

@@ -3,6 +3,8 @@ const APP_ID = process.env.ASA_PRICE_BOT_ID;
 const GUILD_ID = process.env.GUILD_ID;
 const TINYCHART_TOKEN = process.env.TINYCHART_TOKEN;
 const TINYCHART_URL = process.env.TINYCHART_API_URL;
+import "dotenv/config";
+import express from "express";
 import { REST } from "@discordjs/rest";
 import { Routes } from "discord-api-types/v9";
 import { Client, Intents, Constants } from "discord.js";
