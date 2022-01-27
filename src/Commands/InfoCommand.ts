@@ -13,6 +13,7 @@ export class InfoCommand extends BasicCommand {
 
     await interaction.deferReply();
     return TinychartAPI.getAsset(asa).then((asset) => {
+        const icons = this.footerIcons(asset)
         const embed = {
             title:`Info For ${asset.name}`,
             fields:[
@@ -24,6 +25,9 @@ export class InfoCommand extends BasicCommand {
                 {name:"Freeze",value:` ${asset.has_freeze ? "Yes" : "No"}`,inline:true},
                 {name:"Url",value:`${asset.url.length>0?asset.url:"No Url"}`},
             ],
+            footer:{
+              text:`${icons}`
+            }
 
         }
       interaction.editReply({embeds:[embed]});
