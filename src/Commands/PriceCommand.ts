@@ -1,11 +1,11 @@
-import { CommandInteraction, MessageEmbed,MessageAttachment } from "discord.js";
+import { CommandInteraction, MessageEmbed,MessageAttachment, ApplicationCommand } from "discord.js";
 import { BasicCommand } from "./BasicCommand";
 import { TinychartAPI } from "../tinychartAPI";
 import { Asset, Pool } from "../tinychart";
 
 export class PriceCommand extends BasicCommand {
   constructor() {
-    super(["tcp", "tcprice","price"]);
+    super(["tcp","price"]);
   }
   async runCommand(interaction: CommandInteraction): Promise<void> {
     const { commandName, options } = interaction;
@@ -53,5 +53,19 @@ export class PriceCommand extends BasicCommand {
         // );
         interaction.editReply({embeds:[embed]});
       });
+  }
+  buildDiscordCommands():ApplicationCommand[]{
+    let cmds=[];
+    for(const name of this.m_names){
+      cmds.push( {
+        name: name,
+        description: "Replies with the price for the specified ASA",
+        options: [
+          this.asaArgument(), 
+          this.dexArgument()
+        ],
+      },)
+    }
+    return cmds;
   }
 }

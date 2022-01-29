@@ -7,14 +7,13 @@ import { REST } from "@discordjs/rest";
 import { Routes } from "discord-api-types/v9";
 import { Client, Intents, Constants } from "discord.js";
 import { Asset, Pool } from "./tinychart";
-import { AssetSocket } from "./AssetSocket";
-import { WSPool } from "./tinychart";
 import { TinychartAPI } from "./tinychartAPI";
 import { commands } from "./commands";
 import { BasicCommand } from "./Commands/BasicCommand";
 import { InfoCommand } from "./Commands/InfoCommand";
 import { HelpCommand } from "./Commands/HelpCommand";
 import { PriceCommand } from "./Commands/PriceCommand";
+import { AlertCommand } from './Commands/AlertCommand';
 
 const client = new Client({ intents: [Intents.FLAGS.GUILDS] });
 
@@ -22,7 +21,13 @@ const slashCommands: BasicCommand[] = [
   new HelpCommand(),
   new InfoCommand(),
   new PriceCommand(),
+  // new AlertCommand(client)
 ];
+
+let commandsToAdd = commands;
+for(const cmd of slashCommands){
+  commandsToAdd.push(...cmd.buildDiscordCommands())
+}
 
 const discordRest = new REST({ version: "9" }).setToken(Token);
 
@@ -34,12 +39,12 @@ const discordRest = new REST({ version: "9" }).setToken(Token);
     if (GUILD_ID) {
       console.log("Adding Guild Commands");
       await discordRest.put(Routes.applicationGuildCommands(APP_ID, GUILD_ID), {
-        body: commands,
+        body: commandsToAdd,
       });
     } else {
       console.log("Adding application commands");
       await discordRest.put(Routes.applicationCommands(APP_ID), {
-        body: commands,
+        body: commandsToAdd,
       });
     }
 

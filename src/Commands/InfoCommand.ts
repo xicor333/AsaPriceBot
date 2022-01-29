@@ -1,11 +1,11 @@
-import { CommandInteraction } from "discord.js";
+import { ApplicationCommand, CommandInteraction } from "discord.js";
 import { BasicCommand } from "./BasicCommand";
 import { TinychartAPI } from "../tinychartAPI";
 import { Asset } from "../tinychart";
 
 export class InfoCommand extends BasicCommand {
   constructor() {
-    super(["tci", "tcinfo","info"]);
+    super(["tci","info"]);
   }
   async runCommand(interaction: CommandInteraction): Promise<void> {
     const { commandName, options } = interaction;
@@ -32,5 +32,16 @@ export class InfoCommand extends BasicCommand {
         }
       interaction.editReply({embeds:[embed]});
     });
+  }
+  buildDiscordCommands():ApplicationCommand[]{
+    let cmds=[];
+    for(const name of this.m_names){
+      cmds.push( {
+        name: name,
+        description: "Replies with info about the specified ASA",
+        options: [this.asaArgument()],
+      },)
+    }
+    return cmds;
   }
 }

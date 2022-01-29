@@ -1,8 +1,8 @@
-import { CommandInteraction } from "discord.js";
+import { ApplicationCommand, CommandInteraction } from "discord.js";
 import { BasicCommand } from "./BasicCommand";
 export class HelpCommand extends BasicCommand {
   constructor() {
-    super(["help", "tch", "tchelp"]);
+    super(["help", "tch"]);
   }
   checkCommandName(name: string): boolean {
     return this.m_names.includes(name);
@@ -20,5 +20,15 @@ export class HelpCommand extends BasicCommand {
     }
 
     return interaction.reply({embeds:[embed]});
+  }
+  buildDiscordCommands():ApplicationCommand[]{
+    let cmds=[];
+    for(const name of this.m_names){
+      cmds.push( {
+        name: name,
+        description: "Replies with a list of commands",
+      })
+    }
+    return cmds;
   }
 }

@@ -19,14 +19,17 @@ export class AssetSocket {
     this.m_valueChangeCallback = callback;
     this.m_socket.on("message", (data) => this.onMessage(data));
   }
-
+  destroy(){
+    this.m_socket.close()
+    delete this.m_socket
+  }
   onMessage(data) {
     const decoded = this.m_decoder.decode(data);
     this.checkPool(JSON.parse(decoded));
   }
   checkPool(data: any) {
+    console.log(JSON.stringify(data))
     if (data.asset === this.m_pool.asset_1_id) {
-      console.log("Calling callback");
       this.m_valueChangeCallback(data);
     }
   }
