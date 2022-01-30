@@ -24,6 +24,7 @@ Replies with the price of the token in algo and the 24hr % change
 | -------- | --------------------- | -------- |
 | asa      | Id or name of the ASA |          |
 | dex      | the code of the dex   | TM,T2,HS |
+| inv      | Invert the price      |          |
 
 ### Info
 
