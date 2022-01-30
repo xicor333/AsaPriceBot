@@ -15,6 +15,7 @@ export class HelpCommand extends BasicCommand {
             {name:"Help",value:"/help /tch or /tchelp",inline:true},
             {name:"Price",value:"/tcp or /tcprice",inline:true},
             {name:"Info",value:"/tci or /tcinfo",inline:true},
+            {name:"Alert",value:"/tca",inline:true}
         ],
         
     }
