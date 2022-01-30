@@ -16,15 +16,18 @@ import { InfoCommand } from "./Commands/InfoCommand";
 import { HelpCommand } from "./Commands/HelpCommand";
 import { PriceCommand } from "./Commands/PriceCommand";
 import { AlertCommand } from './Commands/AlertCommand';
+import { DBManager } from './DBManager';
 
 const client = new Client({ intents: [Intents.FLAGS.GUILDS] });
+const dbManager = new DBManager()
 
 const slashCommands: BasicCommand[] = [
   new HelpCommand(),
   new InfoCommand(),
   new PriceCommand(),
-  // new AlertCommand(client)
+  new AlertCommand(client,dbManager)
 ];
+
 
 let commandsToAdd = commands;
 for(const cmd of slashCommands){

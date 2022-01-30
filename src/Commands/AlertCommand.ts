@@ -6,26 +6,29 @@ import { AssetSocket } from "../AssetSocket";
 import { AssetTrackerManager } from '../AssetTrackerManager';
 import { TrackerTarget } from '../AssetTracker';
 import { Constants } from "discord.js";
+import { DBManager } from '../DBManager';
 export class AlertCommand extends BasicCommand {
   m_trackerManager:AssetTrackerManager
-  constructor(discordClient:Client) {
+  m_dbManager:DBManager
+  constructor(discordClient:Client,dbManager:DBManager) {
     super(["tca"]);
-    this.m_trackerManager = new AssetTrackerManager(discordClient);
+    this.m_dbManager = dbManager;
+    this.m_trackerManager = new AssetTrackerManager(discordClient,dbManager);
   }
   runCommand(interaction: CommandInteraction): Promise<void> {
     if(interaction.options.getSubcommand() === "add"){
-      return this.runPriceAddCommand(interaction);
+      return this.runAlertAddCommand(interaction);
     }
     else if (interaction.options.getSubcommand() === "remove" ){
-      return this.runPriceRemoveCommand(interaction);
+      return this.runAlertRemoveCommand(interaction);
     }
     else if (interaction.options.getSubcommand() === "clear"){
-      return this.runPriceClearCommand(interaction);
+      return this.runAlertClearCommand(interaction);
     }
 
   }
 
-  async runPriceClearCommand(interaction:CommandInteraction):Promise<void>{
+  async runAlertClearCommand(interaction:CommandInteraction):Promise<void>{
     this.m_trackerManager.clearTrackersForUser(interaction.user.id);
     const embed = {
       title:`Alerts Cleared`,
@@ -34,7 +37,7 @@ export class AlertCommand extends BasicCommand {
     return interaction.reply({embeds:[embed]})
   }
 
-  async runPriceRemoveCommand(interaction:CommandInteraction):Promise<void>{
+  async runAlertRemoveCommand(interaction:CommandInteraction):Promise<void>{
     const { commandName, options } = interaction;
     const asa = options.getString("asa");
 
@@ -51,7 +54,7 @@ export class AlertCommand extends BasicCommand {
     });
   }
 
-  async runPriceAddCommand(interaction: CommandInteraction):Promise<void>{
+  async runAlertAddCommand(interaction: CommandInteraction):Promise<void>{
     const { commandName, options } = interaction;
     const asa = options.getString("asa");
     const gt: number | undefined = options.getNumber("gt");
@@ -59,7 +62,6 @@ export class AlertCommand extends BasicCommand {
     const dex: string = options.getString("dex");
     let target:TrackerTarget = {
       userId:interaction.user.id,
-      guildId:interaction.guildId,
       channelId:interaction.channelId,
       gt,
       lt,
@@ -69,6 +71,9 @@ export class AlertCommand extends BasicCommand {
     if(!gt && !lt || gt && lt)
         return interaction.reply("Invalid parameters, must supply either gt or lt and not both");
 
+    if(this.m_dbManager.countUserTargets(interaction.user.id)>=5)
+      return interaction.reply("No more than 5 alerts can be set at a time. please remove other alerts.");
+      
     await interaction.deferReply();
     return TinychartAPI.getAsset(asa).then((asset) =>
     TinychartAPI.getPools(asset,TinychartAPI.getProvider(dex,asset)).then((pools)=>

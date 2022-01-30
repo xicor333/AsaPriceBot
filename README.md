@@ -6,11 +6,11 @@ Discord bot for getting ASA prices from tinychart
 
 | Name  | Command 1 | Command 2 | Status      |
 | ----- | --------- | --------- | ----------- |
-| Help  | /tch      | /tchelp   | Complete    |
-| Price | /tcp      | /tcprice  | Complete    |
-| Info  | /tci      | /tcinfo   | Complete    |
-| Chart | /tcc      | tcchart   | In Progress |
-| Alert | /tca      | /tcalert  | In Progress |
+| Help  | /tch      | /help     | Complete    |
+| Price | /tcp      | /price    | Complete    |
+| Info  | /tci      | /info     | Complete    |
+| Chart | /tcc      |           | In Progress |
+| Alert | /tca      |           | In Progress |
 
 ### Help
 
@@ -41,7 +41,15 @@ Replies with basic asset info about the token
 | dex      | The code of the dex   | TM,T2,HS               |
 | time     | Timeframe for chart   | 1m,5m,15m,30m,1h,1d,1w |
 
-### Alert (Not complete)
+### Alert
+
+| Name   | Description       |
+| ------ | ----------------- |
+| add    | Adds an alert     |
+| remove | Removes an alert  |
+| clear  | Clears all alerts |
+
+###### Add
 
 | Argument | Description                  | Options  |
 | -------- | ---------------------------- | -------- |
@@ -49,3 +57,12 @@ Replies with basic asset info about the token
 | dex      | the code of the dex          | TM,T2,HS |
 | lt       | Alert when the value < input |          |
 | gt       | Alert when value > input     |          |
+
+###### Remove
+| Argument | Description           | Options |
+| -------- | --------------------- | ------- |
+| asa      | Id or name of the ASA |         |
+
+###### Clear
+
+No arguments

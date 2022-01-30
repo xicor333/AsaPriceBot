@@ -1,5 +1,5 @@
 export interface Asset {
-  id: string;
+  id: number;
   name: string;
   ticker: string;
   creator: string;

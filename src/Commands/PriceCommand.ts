@@ -1,4 +1,4 @@
-import { CommandInteraction, MessageEmbed,MessageAttachment, ApplicationCommand } from "discord.js";
+import { CommandInteraction, MessageEmbed,MessageAttachment, ApplicationCommand, Constants } from "discord.js";
 import { BasicCommand } from "./BasicCommand";
 import { TinychartAPI } from "../tinychartAPI";
 import { Asset, Pool } from "../tinychart";
@@ -12,6 +12,7 @@ export class PriceCommand extends BasicCommand {
 
     const asa: string = options.getString("asa");
     const dex: string | null = options.getString("dex");
+    const inv: boolean = options.getBoolean("inv");
 
     await interaction.deferReply();
     return TinychartAPI.getAsset(asa)
@@ -35,7 +36,7 @@ export class PriceCommand extends BasicCommand {
         }
         const pctChange = ((pool.price - pool.price24h) / pool.price24h) * 100;
         const pctChangeStr = (pctChange<0?"":"+")+pctChange.toFixed(2);
-        const priceStr = pool.price.toPrecision(4);
+        const priceStr = (inv?1/pool.price:pool.price).toPrecision(4);
         const icons =this.footerIcons(info.targetAsset)
         const embed = {
             title:`${info.targetAsset.name}`,
@@ -62,7 +63,13 @@ export class PriceCommand extends BasicCommand {
         description: "Replies with the price for the specified ASA",
         options: [
           this.asaArgument(), 
-          this.dexArgument()
+          this.dexArgument(),
+          {
+            name: "inv",
+            description: "Invert price",
+            required: false,
+            type: Constants.ApplicationCommandOptionTypes.BOOLEAN,
+          }
         ],
       },)
     }
