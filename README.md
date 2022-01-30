@@ -60,6 +60,7 @@ Replies with basic asset info about the token
 | gt       | Alert when value > input     |          |
 
 ###### Remove
+
 | Argument | Description           | Options |
 | -------- | --------------------- | ------- |
 | asa      | Id or name of the ASA |         |

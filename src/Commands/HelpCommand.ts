@@ -8,27 +8,25 @@ export class HelpCommand extends BasicCommand {
     return this.m_names.includes(name);
   }
   runCommand(interaction: CommandInteraction): Promise<void> {
-
     const embed = {
-        title:"Available Commands",
-        fields:[
-            {name:"Help",value:"/help /tch or /tchelp",inline:true},
-            {name:"Price",value:"/tcp or /tcprice",inline:true},
-            {name:"Info",value:"/tci or /tcinfo",inline:true},
-            {name:"Alert",value:"/tca",inline:true}
-        ],
-        
-    }
+      title: "Available Commands",
+      fields: [
+        { name: "Help", value: "/help /tch or /tchelp", inline: true },
+        { name: "Price", value: "/tcp or /tcprice", inline: true },
+        { name: "Info", value: "/tci or /tcinfo", inline: true },
+        { name: "Alert", value: "/tca", inline: true },
+      ],
+    };
 
-    return interaction.reply({embeds:[embed]});
+    return interaction.reply({ embeds: [embed] });
   }
-  buildDiscordCommands():ApplicationCommand[]{
-    let cmds=[];
-    for(const name of this.m_names){
-      cmds.push( {
+  buildDiscordCommands(): ApplicationCommand[] {
+    let cmds = [];
+    for (const name of this.m_names) {
+      cmds.push({
         name: name,
         description: "Replies with a list of commands",
-      })
+      });
     }
     return cmds;
   }

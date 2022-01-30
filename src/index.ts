@@ -15,23 +15,22 @@ import { BasicCommand } from "./Commands/BasicCommand";
 import { InfoCommand } from "./Commands/InfoCommand";
 import { HelpCommand } from "./Commands/HelpCommand";
 import { PriceCommand } from "./Commands/PriceCommand";
-import { AlertCommand } from './Commands/AlertCommand';
-import { DBManager } from './DBManager';
+import { AlertCommand } from "./Commands/AlertCommand";
+import { DBManager } from "./DBManager";
 
 const client = new Client({ intents: [Intents.FLAGS.GUILDS] });
-const dbManager = new DBManager()
+const dbManager = new DBManager();
 
 const slashCommands: BasicCommand[] = [
   new HelpCommand(),
   new InfoCommand(),
   new PriceCommand(),
-  new AlertCommand(client,dbManager)
+  new AlertCommand(client, dbManager),
 ];
 
-
 let commandsToAdd = commands;
-for(const cmd of slashCommands){
-  commandsToAdd.push(...cmd.buildDiscordCommands())
+for (const cmd of slashCommands) {
+  commandsToAdd.push(...cmd.buildDiscordCommands());
 }
 
 const discordRest = new REST({ version: "9" }).setToken(Token);

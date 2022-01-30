@@ -1,27 +1,27 @@
-import { AssetTracker, TrackerTarget } from './AssetTracker';
+import { AssetTracker, TrackerTarget } from "./AssetTracker";
 import { Asset, Pool } from "./tinychart";
-import { Client, TextChannel } from 'discord.js';
+import { Client, TextChannel } from "discord.js";
 import { ChannelType } from "discord-api-types";
-import { DBManager } from './DBManager';
+import { DBManager } from "./DBManager";
 import { TinychartAPI } from "./tinychartAPI";
-var idCounter=0;
+var idCounter = 0;
 
 export class AssetTrackerManager {
   m_assetTrackers: AssetTracker[];
-  m_discordClient:Client
-  m_dbManager:DBManager
-  constructor(discordClient:Client,dbManager:DBManager) {
+  m_discordClient: Client;
+  m_dbManager: DBManager;
+  constructor(discordClient: Client, dbManager: DBManager) {
     this.m_assetTrackers = [];
     this.m_discordClient = discordClient;
     this.m_dbManager = dbManager;
-    this.createTargetsFromDB()
+    this.createTargetsFromDB();
   }
   //get all targets from the DB and add them all
-  async createTargetsFromDB():Promise<void>{
-    let trackerTargets:TrackerTarget[]=this.m_dbManager.getAllTargets();
-    for(const target of trackerTargets){
-      const tracker = this.getTrackerForAsset(target.asset_id,target.pool_id)
-      tracker.addTarget(target)
+  async createTargetsFromDB(): Promise<void> {
+    let trackerTargets: TrackerTarget[] = this.m_dbManager.getAllTargets();
+    for (const target of trackerTargets) {
+      const tracker = this.getTrackerForAsset(target.asset_id, target.pool_id);
+      tracker.addTarget(target);
     }
   }
   //do checks and then add the tracker if it passes
@@ -45,68 +45,74 @@ export class AssetTrackerManager {
     let tracker = this.m_assetTrackers.find((t) => t.assetId() === assetId);
     //we dont have at tracker for this asset, so we need to add one
     if (!tracker) {
-      tracker = new AssetTracker(assetId, poolId, (target: TrackerTarget,price:number) =>
-        this.onTrackerReached(target,price)
+      tracker = new AssetTracker(
+        assetId,
+        poolId,
+        (target: TrackerTarget, price: number) =>
+          this.onTrackerReached(target, price)
       );
       this.m_assetTrackers.push(tracker);
     }
     return tracker;
   }
 
-  private deleteTracker(trackerIndx:number) {
+  private deleteTracker(trackerIndx: number) {
     this.m_assetTrackers[trackerIndx].destroy();
     delete this.m_assetTrackers[trackerIndx];
-    this.m_assetTrackers.splice(trackerIndx,1);
+    this.m_assetTrackers.splice(trackerIndx, 1);
   }
   //clears all trackers associated with this user id
   clearTrackersForUser(userId: string) {
-    for(let i=this.m_assetTrackers.length-1;i>=0;i--)
-    {
+    for (let i = this.m_assetTrackers.length - 1; i >= 0; i--) {
       //remove all targets that this user has for the asset
-      this.m_assetTrackers[i].removeUserTargets(userId)
+      this.m_assetTrackers[i].removeUserTargets(userId);
       //if no targets remain, delete and remove
-      if(!this.m_assetTrackers[i].hasTargets()){
+      if (!this.m_assetTrackers[i].hasTargets()) {
         this.deleteTracker(i);
       }
     }
     this.m_dbManager.removeUserTargets(userId);
   }
-  removeTrackerByAsset(asset:Asset,userId:string){
+  removeTrackerByAsset(asset: Asset, userId: string) {
     //get the tracker id from the database for this user and asset pair
-    const targetsToRemove=this.m_dbManager.removeTargetByAsset(userId,asset.id);
-    for(const targetId of targetsToRemove){
-      this.removeTrackerTarget(targetId)
+    const targetsToRemove = this.m_dbManager.removeTargetByAsset(
+      userId,
+      asset.id
+    );
+    for (const targetId of targetsToRemove) {
+      this.removeTrackerTarget(targetId);
     }
   }
   //removes the specified tracker
   removeTrackerTarget(targetId: number) {
     //find the tracker that has this tracker id
-   const indx = this.m_assetTrackers.findIndex(e=>e.hasTarget(targetId))
-    if(indx<0)
-      throw new Error("Tracker does not exist")
-    else{
-      this.m_assetTrackers[indx].removeTarget(targetId)
+    const indx = this.m_assetTrackers.findIndex((e) => e.hasTarget(targetId));
+    if (indx < 0) throw new Error("Tracker does not exist");
+    else {
+      this.m_assetTrackers[indx].removeTarget(targetId);
       //remove the tracker if it has no targets left
-      if(!this.m_assetTrackers[indx].hasTargets()){
-        this.deleteTracker(indx)
+      if (!this.m_assetTrackers[indx].hasTargets()) {
+        this.deleteTracker(indx);
       }
     }
-     //remove the tracker from the database as well
+    //remove the tracker from the database as well
   }
-  onTrackerReached(target: TrackerTarget,price:number) {
-    this.m_discordClient.channels.fetch(target.channelId).then((channel:TextChannel)=>{
+  onTrackerReached(target: TrackerTarget, price: number) {
+    this.m_discordClient.channels
+      .fetch(target.channelId)
+      .then((channel: TextChannel) => {
         const priceStr = price.toPrecision(4);
         const embed = {
-          title:`Price Alert`,
-          fields:[
-              {name:"User",value:`<@${target.userId}>`,inline:true},
-              {name:"Asset",value:`${target.name}`,inline:true},
-              {name:"Price",value:`${priceStr}Ⱥ`,inline:true},
-          ]
-      }
-        channel.send({embeds:[embed]})
-    })
+          title: `Price Alert`,
+          fields: [
+            { name: "User", value: `<@${target.userId}>`, inline: true },
+            { name: "Asset", value: `${target.name}`, inline: true },
+            { name: "Price", value: `${priceStr}Ⱥ`, inline: true },
+          ],
+        };
+        channel.send({ embeds: [embed] });
+      });
     this.removeTrackerTarget(target.id);
-    this.m_dbManager.removeTargetById(target.id)
+    this.m_dbManager.removeTargetById(target.id);
   }
 }

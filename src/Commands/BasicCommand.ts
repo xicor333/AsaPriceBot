@@ -1,5 +1,5 @@
 import { ApplicationCommand, CommandInteraction } from "discord.js";
-import { Asset } from '../tinychart';
+import { Asset } from "../tinychart";
 import { Constants } from "discord.js";
 export abstract class BasicCommand {
   m_names: string[];
@@ -9,14 +9,14 @@ export abstract class BasicCommand {
   checkCommandName(name: string): boolean {
     return this.m_names.includes(name);
   }
-  footerIcons(asset:Asset){
-    let icons="";
-    icons += asset.verified?"🛡️":"";
-    icons += asset.has_freeze?"❄️":"";
-    icons += asset.has_clawback?"🦝":""; 
+  footerIcons(asset: Asset) {
+    let icons = "";
+    icons += asset.verified ? "🛡️" : "";
+    icons += asset.has_freeze ? "❄️" : "";
+    icons += asset.has_clawback ? "🦝" : "";
     return icons;
   }
-  asaArgument(){
+  asaArgument() {
     return {
       name: "asa",
       description: "asa name or ID",
@@ -24,7 +24,7 @@ export abstract class BasicCommand {
       type: Constants.ApplicationCommandOptionTypes.STRING,
     };
   }
-  dexArgument(){
+  dexArgument() {
     return {
       name: "dex",
       description: "dex to grab price from",
@@ -39,5 +39,5 @@ export abstract class BasicCommand {
   }
 
   abstract runCommand(interaction: CommandInteraction): Promise<void>;
-  abstract buildDiscordCommands():ApplicationCommand[];
+  abstract buildDiscordCommands(): ApplicationCommand[];
 }
