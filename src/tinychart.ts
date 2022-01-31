@@ -37,3 +37,9 @@ export interface WSPool {
   volume: number;
   liquidity: number;
 }
+export interface Provider {
+  id: string;
+  name: string;
+  url: string;
+  active: boolean;
+}

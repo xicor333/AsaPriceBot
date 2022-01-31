@@ -20,7 +20,6 @@ const asaArgument = {
 };
 
 export const commands = [
-  
   // {
   //   name:'chart',
   //   description: 'Replies with the chart for the specified ASA',

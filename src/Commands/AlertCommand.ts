@@ -75,7 +75,7 @@ export class AlertCommand extends BasicCommand {
 
     await interaction.deferReply();
     return TinychartAPI.getAsset(asa).then((asset) =>
-      TinychartAPI.getPools(asset, TinychartAPI.getProvider(dex, asset))
+      TinychartAPI.getPools(asset, this.getProvider(dex, asset))
         .then((pools) => TinychartAPI.getAlgoPool(pools))
         .then((pool: Pool) => {
           this.m_trackerManager.addAlert(target, asset, pool);

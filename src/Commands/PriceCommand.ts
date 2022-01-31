@@ -23,7 +23,7 @@ export class PriceCommand extends BasicCommand {
     await interaction.deferReply();
     return TinychartAPI.getAsset(asa)
       .then(async (targetAsset) => {
-        const provider = TinychartAPI.getProvider(dex, targetAsset);
+        const provider = this.getProvider(dex, targetAsset);
         const pools: Pool[] = await TinychartAPI.getPools(
           targetAsset,
           provider
@@ -33,7 +33,9 @@ export class PriceCommand extends BasicCommand {
       .then((info) => {
         if (!info.pools || info.pools.length < 1)
           throw new Error(
-            `No pools found for ${info.targetAsset.ticker} on ${info.provider}`
+            `No pools found for ${info.targetAsset.ticker} on ${
+              this.getProviderFromId(info.provider).name
+            }`
           );
         //find the algo -> asa pool and return the price on that pool
         const pool = TinychartAPI.getAlgoPool(info.pools);
@@ -62,7 +64,9 @@ export class PriceCommand extends BasicCommand {
             { name: "Change", value: `${pctChangeStr}%`, inline: true },
           ],
           footer: {
-            text: `From ${info.provider}\n${icons}`,
+            text: `From ${
+              this.getProviderFromId(info.provider).name
+            }\n${icons}`,
           },
         };
         // interaction.editReply(

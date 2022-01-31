@@ -1,4 +1,4 @@
-import { Pool, Asset } from "./tinychart";
+import { Pool, Asset, Provider } from "./tinychart";
 import axios, { AxiosError, AxiosResponse } from "axios";
 
 const TINYCHART_TOKEN = process.env.TINYCHART_TOKEN;
@@ -19,20 +19,8 @@ export module TinychartAPI {
   export function getAssetCmd(asset_id): string {
     return encodeURI(TINYCHART_URL + `/asset/${asset_id}`);
   }
-  export function getProvider(inputDex, asset): string {
-    //get the asset's prefered dex if it's not specified
-    if (!inputDex) return getPreferredProvider(asset);
-    else {
-      if (!["TM", "T2", "HS"].includes(inputDex)) {
-        throw new Error("Invalid Dex: Options are: TM,T2,HS");
-      }
-    }
-    return inputDex;
-  }
-  export function getPreferredProvider(asset) {
-    if (asset.t2) return "T2";
-    else if (asset.hs) return "HS";
-    return "TM";
+  export function getProvidersCmd(): string {
+    return encodeURI(TINYCHART_URL + `/providers`);
   }
 
   export function handleAxiosRequest(url): Promise<any> {
@@ -74,5 +62,12 @@ export module TinychartAPI {
 
     //find the algo -> asa pool and return the price on that pool
     return pools.find((p) => !p.asset_2_id);
+  }
+  export function getProviders(): Promise<Provider[]> {
+    return runCommand(getProvidersCmd()).then((providers) => {
+      if (!providers || providers.length < 1)
+        throw new Error("No providers found");
+      return providers;
+    });
   }
 }
