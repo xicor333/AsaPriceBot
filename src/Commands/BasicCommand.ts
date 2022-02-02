@@ -73,11 +73,11 @@ export abstract class BasicCommand {
     //if we have providers, prioritize by later added
     for (let i = this.m_providers.length - 1; i >= 0; i--) {
       const dexId = this.m_providers[i].name;
-      if (asset[dexId.toLowerCase()]) return dexId;
+      if (asset[dexId.toLowerCase()] || asset[dexId]) return dexId;
     }
     // if for some reason we have no providers, go back to default
-    if (asset.t2) return "T2";
-    else if (asset.hs) return "HS";
+    if (asset.t2 || asset.T2) return "T2";
+    else if (asset.hs || asset.HS) return "HS";
     return "TM";
   }
   getProviderFromId(id: string) {
