@@ -1,4 +1,4 @@
-import { Pool, Asset, Provider } from "./tinychart";
+import { Pool, Asset, Provider, PriceData } from "./tinychart";
 import axios, { AxiosError, AxiosResponse } from "axios";
 
 const TINYCHART_TOKEN = process.env.TINYCHART_TOKEN;
@@ -21,6 +21,10 @@ export module TinychartAPI {
   }
   export function getProvidersCmd(): string {
     return encodeURI(TINYCHART_URL + `/providers`);
+  }
+
+  export function getChartCmd(pool_id, time_scale): string {
+    return encodeURI(TINYCHART_URL + `/pool/${pool_id}/prices/simple/${time_scale}`);
   }
 
   export function handleAxiosRequest(url): Promise<any> {
@@ -68,6 +72,14 @@ export module TinychartAPI {
       if (!providers || providers.length < 1)
         throw new Error("No providers found");
       return providers;
+    });
+  }
+
+  export function getChartData(poolId: number, timeScale: string) {
+    return runCommand(getChartCmd(poolId, timeScale)).then((price_data) => {
+      if (!price_data)
+        throw new Error("No data found");
+      return price_data;
     });
   }
 }

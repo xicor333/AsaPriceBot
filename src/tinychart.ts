@@ -43,3 +43,9 @@ export interface Provider {
   url: string;
   active: boolean;
 }
+
+
+export interface PriceData {
+  timestamp: number;
+  price: number;
+}

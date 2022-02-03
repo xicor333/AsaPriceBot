@@ -16,6 +16,7 @@ import { InfoCommand } from "./Commands/InfoCommand";
 import { HelpCommand } from "./Commands/HelpCommand";
 import { PriceCommand } from "./Commands/PriceCommand";
 import { AlertCommand } from "./Commands/AlertCommand";
+import { ChartCommand } from "./Commands/ChartCommand";
 import { DBManager } from "./DBManager";
 
 const client = new Client({ intents: [Intents.FLAGS.GUILDS] });
@@ -28,6 +29,7 @@ const slashCommands: BasicCommand[] = [
   new InfoCommand(),
   new PriceCommand(),
   new AlertCommand(client, dbManager),
+  new ChartCommand(),
 ];
 
 async function updateCommands() {
