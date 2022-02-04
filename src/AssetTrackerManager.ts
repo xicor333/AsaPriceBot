@@ -1,4 +1,4 @@
-import { AssetTracker, TrackerTarget } from "./AssetTracker";
+import { AssetTracker, TrackerTarget } from './AssetTracker';
 import { Asset, Pool } from "./tinychart";
 import { Client, TextChannel } from "discord.js";
 import { ChannelType } from "discord-api-types";
@@ -61,6 +61,15 @@ export class AssetTrackerManager {
     delete this.m_assetTrackers[trackerIndx];
     this.m_assetTrackers.splice(trackerIndx, 1);
   }
+  //returns all trackers for the specified user id
+  getTargetsForUser(userId:string) : TrackerTarget[] {
+    let trackers:TrackerTarget[] = [];
+    for(const tracker of this.m_assetTrackers){
+      trackers.push(...tracker.getUserTargets(userId))
+    }
+    return trackers;
+  }
+
   //clears all trackers associated with this user id
   clearTrackersForUser(userId: string) {
     for (let i = this.m_assetTrackers.length - 1; i >= 0; i--) {

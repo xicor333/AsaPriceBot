@@ -22,7 +22,24 @@ export class AlertCommand extends BasicCommand {
       return this.runAlertRemoveCommand(interaction);
     } else if (interaction.options.getSubcommand() === "clear") {
       return this.runAlertClearCommand(interaction);
+    } else if (interaction.options.getSubcommand() === "list"){
+      return this.runAlertListCommand(interaction);
     }
+  }
+  async runAlertListCommand(interaction: CommandInteraction): Promise<void> {
+    const userTargets = this.m_trackerManager.getTargetsForUser(interaction.user.id );
+
+    let fields = []
+    let indx=1;
+    for(const target of userTargets ){
+      let priceStr = target.gt !== null ? `>${target.gt}` : `<${target.lt}`;
+      fields.push({name:`${indx++}`,value:`${target.name} @ ${priceStr} `,inline:true})
+    }
+    let embed = {
+      title: "List of alerts",
+      fields: fields
+    }
+    return interaction.reply({embeds:[embed]});
   }
 
   async runAlertClearCommand(interaction: CommandInteraction): Promise<void> {
@@ -130,6 +147,11 @@ export class AlertCommand extends BasicCommand {
             type: Constants.ApplicationCommandOptionTypes.SUB_COMMAND,
             name: "clear",
             description: "Remove all price alerts",
+          },
+          {
+            type: Constants.ApplicationCommandOptionTypes.SUB_COMMAND,
+            name: "list",
+            description: "List all current alerts",
           },
         ],
       });

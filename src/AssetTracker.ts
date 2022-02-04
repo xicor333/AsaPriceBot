@@ -73,4 +73,7 @@ export class AssetTracker {
   removeUserTargets(userId: string) {
     this.m_targets = this.m_targets.filter((e) => e.userId !== userId);
   }
+  getUserTargets(userId: string): TrackerTarget[]{
+    return this.m_targets.filter((e) => e.userId == userId)
+  }
 }
