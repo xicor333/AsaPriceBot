@@ -11,10 +11,11 @@ export class HelpCommand extends BasicCommand {
     const embed = {
       title: "Available Commands",
       fields: [
-        { name: "Help", value: "/help /tch or /tchelp", inline: true },
-        { name: "Price", value: "/tcp or /tcprice", inline: true },
-        { name: "Info", value: "/tci or /tcinfo", inline: true },
-        { name: "Alert", value: "/tca", inline: true },
+        { name: "Help", value: "/help or /tch", inline: true },
+        { name: "Price", value: "/tcp or /price", inline: true },
+        { name: "Info", value: "/tci or /info", inline: true },
+        { name: "Alert", value: "/tca or /alert", inline: true },
+        { name: "Chart", value: "/tcc or /chart", inline:true}
       ],
     };
 

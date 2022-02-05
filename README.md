@@ -1,16 +1,16 @@
 # AsaPriceBot
 
-Discord bot for getting ASA prices from tinychart
+Discord bot for getting ASA prices from TinyChart
 
 ## Commands
 
-| Name  | Command 1 | Command 2 | Status      |
-| ----- | --------- | --------- | ----------- |
-| Help  | /tch      | /help     | Complete    |
-| Price | /tcp      | /price    | Complete    |
-| Info  | /tci      | /info     | Complete    |
-| Chart | /tcc      |           | In Progress |
-| Alert | /tca      |           | In Progress |
+| Name  | Command 1 | Command 2 | Status   |
+| ----- | --------- | --------- | -------- |
+| Help  | /tch      | /help     | Complete |
+| Price | /tcp      | /price    | Complete |
+| Info  | /tci      | /info     | Complete |
+| Chart | /tcc      | /chart    | Complete |
+| Alert | /tca      | /alert    | Complete |
 
 ### Help
 
@@ -49,6 +49,7 @@ Replies with basic asset info about the token
 | add    | Adds an alert     |
 | remove | Removes an alert  |
 | clear  | Clears all alerts |
+| list   | Lists all alerts  |
 
 ###### Add
 
@@ -66,5 +67,9 @@ Replies with basic asset info about the token
 | asa      | Id or name of the ASA |         |
 
 ###### Clear
+
+No arguments
+
+###### List
 
 No arguments

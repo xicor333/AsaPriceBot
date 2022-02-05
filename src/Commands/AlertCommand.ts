@@ -11,7 +11,7 @@ export class AlertCommand extends BasicCommand {
   m_trackerManager: AssetTrackerManager;
   m_dbManager: DBManager;
   constructor(discordClient: Client, dbManager: DBManager) {
-    super(["tca"]);
+    super(["tca","alert"]);
     this.m_dbManager = dbManager;
     this.m_trackerManager = new AssetTrackerManager(discordClient, dbManager);
   }
