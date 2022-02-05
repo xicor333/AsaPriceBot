@@ -15,7 +15,8 @@ export class HelpCommand extends BasicCommand {
         { name: "Price", value: "/tcp or /price", inline: true },
         { name: "Info", value: "/tci or /info", inline: true },
         { name: "Alert", value: "/tca or /alert", inline: true },
-        { name: "Chart", value: "/tcc or /chart", inline:true}
+        { name: "Chart", value: "/tcc or /chart", inline:true},
+        { name: "For More Info", value:"https://github.com/xicor333/AsaPriceBot"}
       ],
     };
 
