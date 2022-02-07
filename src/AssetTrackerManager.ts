@@ -1,6 +1,6 @@
 import { AssetTracker, TrackerTarget } from './AssetTracker';
 import { Asset, Pool } from "./tinychart";
-import { Client, TextChannel } from "discord.js";
+import { Client, TextChannel, User } from "discord.js";
 import { ChannelType } from "discord-api-types";
 import { DBManager } from "./DBManager";
 import { TinychartAPI } from "./tinychartAPI";
@@ -107,10 +107,7 @@ export class AssetTrackerManager {
     //remove the tracker from the database as well
   }
   onTrackerReached(target: TrackerTarget, price: number) {
-    this.m_discordClient.channels
-      .fetch(target.channelId)
-      .then((channel: TextChannel) => {
-        const priceStr = price.toPrecision(4);
+    const priceStr = price.toPrecision(4);
         const embed = {
           title: `Price Alert`,
           fields: [
@@ -119,8 +116,16 @@ export class AssetTrackerManager {
             { name: "Price", value: `${priceStr}Ⱥ`, inline: true },
           ],
         };
+    this.m_discordClient.channels
+      .fetch(target.channelId)
+      .then((channel: TextChannel) => {
         channel.send({ embeds: [embed] });
       });
+    this.m_discordClient.users
+      .fetch(target.userId)
+      .then((user:User)=>{
+        user.send({embeds:[embed]});
+      })
     this.removeTrackerTarget(target.id);
     this.m_dbManager.removeTargetById(target.id);
   }
