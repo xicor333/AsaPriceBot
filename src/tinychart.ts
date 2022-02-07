@@ -49,3 +49,9 @@ export interface PriceData {
   timestamp: number;
   price: number;
 }
+
+export interface TimeQuery{
+  start: number;
+  end: number;
+  candle_type: string;
+}

@@ -23,8 +23,8 @@ export module TinychartAPI {
     return encodeURI(TINYCHART_URL + `/providers`);
   }
 
-  export function getChartCmd(pool_id, time_scale): string {
-    return encodeURI(TINYCHART_URL + `/pool/${pool_id}/prices/simple/${time_scale}`);
+  export function getChartCmd(pool_id: number, start: number, end: number, type:string) {
+    return encodeURI(TINYCHART_URL + `/pool/${pool_id}/prices?start=${start}&end=${end}&type=${type}`);
   }
 
   export function handleAxiosRequest(url): Promise<any> {
@@ -75,8 +75,8 @@ export module TinychartAPI {
     });
   }
 
-  export function getChartData(poolId: number, timeScale: string) {
-    return runCommand(getChartCmd(poolId, timeScale)).then((price_data) => {
+  export function getChartData(poolId: number, start: number, end: number, type:string) {
+    return runCommand(getChartCmd(poolId, start,end, type)).then((price_data) => {
       if (!price_data)
         throw new Error("No data found");
       return price_data;

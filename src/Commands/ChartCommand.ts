@@ -1,9 +1,10 @@
 import { CommandInteraction, MessageEmbed,MessageAttachment, ApplicationCommand, Constants, Message } from "discord.js";
 import { BasicCommand } from "./BasicCommand";
 import { TinychartAPI } from "../tinychartAPI";
-import { Asset, Pool } from "../tinychart";
+import { Asset, Pool, TimeQuery } from "../tinychart";
 import * as child_process from "child_process";
 import fs from  "fs";
+import puppeteer from "puppeteer";
 
 export class ChartCommand extends BasicCommand {
   constructor() {
@@ -28,25 +29,72 @@ export class ChartCommand extends BasicCommand {
         );
         return { provider, targetAsset, pools };
       })
-      .then((info) => {
-        if (!info.pools || info.pools.length < 1)
-          throw new Error(`No pools found for ${info.targetAsset.ticker} on ${info.provider}`);
-        //find the algo -> asa pool and return the price on that pool
-        const pool = TinychartAPI.getAlgoPool(info.pools);
-        if (!pool) {
-          throw new Error(
-            `${info.targetAsset.ticker} does not have any algo pools`
-          ); }
-        return {pool};
-        })
+
       .then(async (chart) => {
-        const tinyChartData = await TinychartAPI.getChartData(chart.pool.id, time);
+        
+        const url = `https://tinychart.org/asset/${chart.targetAsset.id}`
+
+        const Screenshot = async () => {             
+          const browser = await puppeteer.launch();  
+          const page = await browser.newPage();      
+          await page.setViewport({
+          width: 1920,
+          height: 1080,
+          deviceScaleFactor: 1,
+          isLandscape: true
+          })
+          await page.goto(url);                      
+
+          await page.$x('//*[@id="react-select-5-input"]')
+
+
+          await page.screenshot({
+            path: `${chart.targetAsset.id}.png`,
+            clip: {x: 199, y: 195, width: 1130, height: 820}
+        })
+
+          await browser.close();          
+
+          
+        }                  
+        await Screenshot();
+
+        /*switch(time) {
+          case "1M":
+            time_query.start = (Math.floor( Date.now()/1000) - (60 * 60)) 
+            console.log(time_query.start);
+            time_query.end = Math.floor( Date.now()/1000)
+            console.log(time_query.end);
+            time_query.candle_type = "1M"
+            break
+          case "1H":
+            time_query.start = (Math.floor( Date.now()/1000) - ( 60 * 60 * 24))
+            time_query.end = Math.floor( Date.now()/1000)
+            time_query.candle_type = "1H";
+            break
+          
+          case "1D":
+            time_query.start = (Math.floor( Date.now()/1000) - (60 * 60 * 24 * 7))
+            time_query.end = Math.floor( Date.now()/1000)
+            time_query.candle_type = "1D";
+            break;
+
+          default:{
+            throw new Error("There was a problem wiht fetching the data");
+            break
+          }
+        }
+
+        const tinyChartData = await TinychartAPI.getChartData(chart.pool.id, time_query.start, time_query.end, time_query.candle_type);
         if (!tinyChartData){
             throw new Error(
                 `There was a problem fetching the data.`
             );
         
         }
+
+
+
         fs.writeFile("output.json", JSON.stringify(tinyChartData), function(err){
           if (err) throw err;
         });
@@ -54,17 +102,14 @@ export class ChartCommand extends BasicCommand {
 
 
         const child = child_process.exec('python chartcreator.py')
-        await new Promise( (resolve) => {child.on('close', resolve) })       
+        await new Promise( (resolve) => {child.on('close', resolve) })  */     
 
-        const file = new MessageAttachment('testingChart.png')
+        const file = new MessageAttachment(`${chart.targetAsset.id}.png`)
 
         const embed = {
             title:`Chart`,
-            image: {url: 'attachment://testingChart.png'}, 
-            
-            footer:{
-               // text:`From ${info.provider}\n${icons}`
-            }
+            image: {url: `attachment://${chart.targetAsset.id}.png`}, 
+
         }
         interaction.editReply({embeds:[embed], files: [file]});
         
@@ -80,9 +125,14 @@ export class ChartCommand extends BasicCommand {
           this.asaArgument(), 
           {
             name: "time",
-            description: "simple time request for data",
+            description: "time arguments for time related queries",
             required: true,
             type: Constants.ApplicationCommandOptionTypes.STRING,
+            choices: [
+              { name: "Hour", value: "1M"}, 
+              { name: "Day", value: "1H"},
+              { name: "Week", value: "1D"},
+            ]
           },
           this.dexArgument(),
           {
