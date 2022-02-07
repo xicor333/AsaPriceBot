@@ -4,7 +4,7 @@ import { TinychartAPI } from "../tinychartAPI";
 import { Asset, Pool, TimeQuery } from "../tinychart";
 import * as child_process from "child_process";
 import fs from  "fs";
-import puppeteer from "puppeteer";
+import puppeteer, { Puppeteer, WaitTask } from "puppeteer";
 
 export class ChartCommand extends BasicCommand {
   constructor() {
@@ -14,10 +14,9 @@ export class ChartCommand extends BasicCommand {
     const { commandName, options } = interaction;
 
     const asa: string = options.getString("asa");
-    const time: string = options.getString("time");
+    const timeNumber: number = options.getNumber("time");
     const dex: string | null = options.getString("dex");
     const inv: boolean = options.getBoolean("inv");
-
 
     await interaction.deferReply();
     return TinychartAPI.getAsset(asa)
@@ -35,7 +34,7 @@ export class ChartCommand extends BasicCommand {
         const url = `https://tinychart.org/asset/${chart.targetAsset.id}`
 
         const Screenshot = async () => {             
-          const browser = await puppeteer.launch();  
+          const browser = await puppeteer.launch({headless: true});  
           const page = await browser.newPage();      
           await page.setViewport({
           width: 1920,
@@ -45,65 +44,75 @@ export class ChartCommand extends BasicCommand {
           })
           await page.goto(url);                      
 
-          await page.$x('//*[@id="react-select-5-input"]')
 
+          await page.waitForTimeout(2000); 
 
+          await page.mouse.click(1140, 200, {button: "left"}  )
+          
+          await page.mouse.move(1140, 280)
+
+          await page.mouse.wheel({deltaY: (timeNumber % 2 > 0 ) ?  - 1000 : 1000})
+
+          const x = 1128
+          const yDelta = 32
+          const yStart = ((timeNumber % 2 > 0 ) ?   271 : 233)
+          
+          switch(timeNumber){
+            case (1) :
+              
+              await page.mouse.click(x, yStart + yDelta, {button: "left"}  )
+              await page.waitForTimeout(500)
+              break;
+            case (3) :
+              await page.mouse.click(x, yStart + yDelta * 2, {button: "left"}  )
+              await page.waitForTimeout(500)
+              break;
+            case (5) :
+              await page.mouse.click(x, yStart + yDelta * 3, {button: "left"}  )
+              await page.waitForTimeout(500)
+              break;
+            case (7) :
+              await page.mouse.click(x, yStart + yDelta * 4, {button: "left"}  )
+              await page.waitForTimeout(500)
+              break;
+            case (9) :
+              await page.mouse.click(x, yStart + yDelta * 6, {button: "left"}  )
+              await page.waitForTimeout(500)
+              break;
+            case (2) :
+              await page.mouse.click(x, yStart + yDelta, {button: "left"}  )
+              await page.waitForTimeout(500)
+              break;
+            case (4) :
+              await page.mouse.click(x, yStart + yDelta * 2, {button: "left"}  )
+              await page.waitForTimeout(500)
+              break;            
+            case (6) :
+              await page.mouse.click(x, yStart + yDelta * 3, {button: "left"}  )
+              await page.waitForTimeout(800)
+              break;
+            case (8) :
+              await page.mouse.click(x, yStart + yDelta * 6, {button: "left"}  )
+              await page.waitForTimeout(800)
+              break;
+            case (10) :
+              await page.mouse.click(x, yStart + yDelta * 7, {button: "left"}  )
+              await page.waitForTimeout(800)
+              break;}
+
+          await page.waitForTimeout(500);
+
+            
           await page.screenshot({
             path: `${chart.targetAsset.id}.png`,
-            clip: {x: 199, y: 195, width: 1130, height: 820}
-        })
-
+            clip: {x: 199, y: 195, width: 1130, height: 820}})
+        
           await browser.close();          
 
-          
+           
         }                  
         await Screenshot();
-
-        /*switch(time) {
-          case "1M":
-            time_query.start = (Math.floor( Date.now()/1000) - (60 * 60)) 
-            console.log(time_query.start);
-            time_query.end = Math.floor( Date.now()/1000)
-            console.log(time_query.end);
-            time_query.candle_type = "1M"
-            break
-          case "1H":
-            time_query.start = (Math.floor( Date.now()/1000) - ( 60 * 60 * 24))
-            time_query.end = Math.floor( Date.now()/1000)
-            time_query.candle_type = "1H";
-            break
-          
-          case "1D":
-            time_query.start = (Math.floor( Date.now()/1000) - (60 * 60 * 24 * 7))
-            time_query.end = Math.floor( Date.now()/1000)
-            time_query.candle_type = "1D";
-            break;
-
-          default:{
-            throw new Error("There was a problem wiht fetching the data");
-            break
-          }
-        }
-
-        const tinyChartData = await TinychartAPI.getChartData(chart.pool.id, time_query.start, time_query.end, time_query.candle_type);
-        if (!tinyChartData){
-            throw new Error(
-                `There was a problem fetching the data.`
-            );
         
-        }
-
-
-
-        fs.writeFile("output.json", JSON.stringify(tinyChartData), function(err){
-          if (err) throw err;
-        });
-
-
-
-        const child = child_process.exec('python chartcreator.py')
-        await new Promise( (resolve) => {child.on('close', resolve) })  */     
-
         const file = new MessageAttachment(`${chart.targetAsset.id}.png`)
 
         const embed = {
@@ -127,20 +136,27 @@ export class ChartCommand extends BasicCommand {
             name: "time",
             description: "time arguments for time related queries",
             required: true,
-            type: Constants.ApplicationCommandOptionTypes.STRING,
+            type: Constants.ApplicationCommandOptionTypes.NUMBER,
             choices: [
-              { name: "Hour", value: "1M"}, 
-              { name: "Day", value: "1H"},
-              { name: "Week", value: "1D"},
+              { name: "1m" , value: 1 }, 
+              { name: "3m" , value: 3 }, 
+              { name: "5m" , value: 5 }, 
+              { name: "15m", value: 7 }, 
+              { name: "30m", value: 9 }, 
+              { name: "1h" , value: 2 }, 
+              { name: "4h" , value: 4 }, 
+              { name: "12h", value: 6 }, 
+              { name: "1d" , value: 8 }, 
+              { name: "7d" , value: 10},
             ]
           },
           this.dexArgument(),
-          {
+          /*{
             name: "inv",
             description: "Invert price",
             required: false,
             type: Constants.ApplicationCommandOptionTypes.BOOLEAN,
-          }
+          }*/
         ],
       },)
     }
