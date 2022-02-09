@@ -18,6 +18,18 @@ import { PriceCommand } from "./Commands/PriceCommand";
 import { AlertCommand } from "./Commands/AlertCommand";
 import { ChartCommand } from "./Commands/ChartCommand";
 import { DBManager } from "./DBManager";
+import cluster from "cluster";
+
+
+if (cluster.isPrimary) {
+  cluster.fork();
+
+  cluster.on('exit', function(worker, code, signal) {
+    cluster.fork();
+  });
+}
+
+if (cluster.isWorker) {
 
 const client = new Client({ intents: [Intents.FLAGS.GUILDS] });
 const dbManager = new DBManager();
@@ -99,3 +111,4 @@ client.on("interactionCreate", async (interaction) => {
 });
 
 client.login(Token);
+}
