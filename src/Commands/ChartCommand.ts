@@ -45,7 +45,7 @@ export class ChartCommand extends BasicCommand {
           await page.goto(url);                      
 
 
-          await page.waitForTimeout(2000); 
+          await page.waitForTimeout(1000); 
 
           await page.mouse.click(1140, 200, {button: "left"}  )
           
@@ -89,18 +89,17 @@ export class ChartCommand extends BasicCommand {
               break;            
             case (6) :
               await page.mouse.click(x, yStart + yDelta * 3, {button: "left"}  )
-              await page.waitForTimeout(800)
+              await page.waitForTimeout(500)
               break;
             case (8) :
               await page.mouse.click(x, yStart + yDelta * 6, {button: "left"}  )
-              await page.waitForTimeout(800)
+              await page.waitForTimeout(500)
               break;
             case (10) :
               await page.mouse.click(x, yStart + yDelta * 7, {button: "left"}  )
-              await page.waitForTimeout(800)
+              await page.waitForTimeout(500)
               break;}
 
-          await page.waitForTimeout(500);
 
             
           await page.screenshot({
