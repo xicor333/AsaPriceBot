@@ -6,6 +6,19 @@ import mergeImages from "merge-images"
 import puppeteer, { Puppeteer, WaitTask } from "puppeteer";
 import canvas from "canvas";
 
+const timeOptions=[
+  { name: "1m" , value: 1 }, 
+  { name: "3m" , value: 3 }, 
+  { name: "5m" , value: 5 }, 
+  { name: "15m", value: 7 }, 
+  { name: "30m", value: 9 }, 
+  { name: "1h" , value: 2 }, 
+  { name: "4h" , value: 4 }, 
+  { name: "12h", value: 6 }, 
+  { name: "1d" , value: 8 }, 
+  { name: "7d" , value: 10},
+]
+
 export class ChartCommand extends BasicCommand {
   constructor() {
     super(["tcc","chart"]);
@@ -122,11 +135,13 @@ export class ChartCommand extends BasicCommand {
           }
         }
         
-        const file = new MessageAttachment(`${chart.targetAsset.id}.png`)        
-
+        const file = new MessageAttachment(`${chart.targetAsset.id}.png`)
+        const timeName:string = timeOptions.find(o => o.value == timeNumber).name
         const embed = {
-            title:`Chart`,
+            title:`${chart.targetAsset.name} - ${timeName}`,
             image: {url: `attachment://${chart.targetAsset.id}.png`}, 
+            url:url
+
 
         }
         interaction.editReply({embeds:[embed], files: [file]});
@@ -146,18 +161,7 @@ export class ChartCommand extends BasicCommand {
             description: "time arguments for time related queries",
             required: true,
             type: Constants.ApplicationCommandOptionTypes.NUMBER,
-            choices: [
-              { name: "1m" , value: 1 }, 
-              { name: "3m" , value: 3 }, 
-              { name: "5m" , value: 5 }, 
-              { name: "15m", value: 7 }, 
-              { name: "30m", value: 9 }, 
-              { name: "1h" , value: 2 }, 
-              { name: "4h" , value: 4 }, 
-              { name: "12h", value: 6 }, 
-              { name: "1d" , value: 8 }, 
-              { name: "7d" , value: 10},
-            ]
+            choices: timeOptions
           },
           this.dexArgument(),
           {

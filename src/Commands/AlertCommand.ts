@@ -82,7 +82,7 @@ export class AlertCommand extends BasicCommand {
 
     if ((!gt && !lt) || (gt && lt))
       return interaction.reply(
-        "Invalid parameters, must supply either gt or lt and not both"
+        "Invalid parameters, must supply either greater than (gt) or less than (lt) and not both"
       );
 
     if (this.m_dbManager.countUserTargets(interaction.user.id) >= 5)
