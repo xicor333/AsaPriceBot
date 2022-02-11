@@ -96,6 +96,11 @@ export class ChartCommand extends BasicCommand {
           title: `${chart.targetAsset.name} - ${time.toUpperCase()}`,
           image: { url: `attachment://${chart.targetAsset.id}.png` },
           url: url,
+          footer: {
+            text: `From ${
+              dex?this.getProviderFromId(dex).name:"Default"
+            }`,
+          },
         };
         interaction.editReply({ embeds: [embed], files: [file] });
       });
