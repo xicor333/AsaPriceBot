@@ -101,7 +101,7 @@ export class ChartCommand extends BasicCommand {
             const context = newImage.getContext('2d');
             const background = await canvas.loadImage(`./${chart.targetAsset.id}.png`);
             context.drawImage(background, 0, 0, newImage.width, newImage.height);
-            const foreground = await canvas.loadImage("./easter_egg/EasterEgg.png");
+            const foreground = await canvas.loadImage("./EasterEgg.png");
             context.drawImage(foreground,0, 160, 660, 660);
             return new MessageAttachment(newImage.toBuffer(), `Blapu.png`);
           }
