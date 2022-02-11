@@ -12,7 +12,7 @@ import { Asset, Pool, TimeQuery } from "../tinychart";
 import * as child_process from "child_process";
 import fs from "fs";
 import puppeteer, { Puppeteer, WaitTask } from "puppeteer";
-import canvas from "canvas";
+import canvas, { Canvas } from "canvas";
 
 const timeOptions = [
   { name: "1m", value: 1 },
@@ -38,6 +38,7 @@ export class ChartCommand extends BasicCommand {
     const time: string = options.getString("time");
     const dex: string | null = options.getString("dex");
     const inv: boolean = options.getBoolean("inv");
+    const ee: boolean = options.getBoolean("ee");
 
     await interaction.deferReply();
     return TinychartAPI.getAsset(asa)
@@ -91,11 +92,29 @@ export class ChartCommand extends BasicCommand {
         };
         await Screenshot();
 
-        const file = new MessageAttachment(`${chart.targetAsset.id}.png`);
+
+
+
+        const getFile = async(isEaster) => {
+          if(isEaster){
+            const newImage = canvas.createCanvas(1130, 820);
+            const context = newImage.getContext('2d');
+            const background = await canvas.loadImage(`./${chart.targetAsset.id}.png`);
+            context.drawImage(background, 0, 0, newImage.width, newImage.height);
+            const foreground = await canvas.loadImage("./easter_egg/EasterEgg.png");
+            context.drawImage(foreground,0, 160, 660, 660);
+            return new MessageAttachment(newImage.toBuffer(), `Blapu.png`);
+          }
+          else{
+            return new MessageAttachment(`${chart.targetAsset.id}.png`);
+          }
+        }
+
+        const file = await getFile(ee);
 
         const embed = {
           title: `${chart.targetAsset.name} - ${time.toUpperCase()}`,
-          image: { url: `attachment://${chart.targetAsset.id}.png` },
+          image: { url: (!ee) ? `attachment://${chart.targetAsset.id}.png` : "attachment://Blapu.png" },
           url: url,
           footer: {
             text: `From ${
@@ -139,6 +158,12 @@ export class ChartCommand extends BasicCommand {
             required: false,
             type: Constants.ApplicationCommandOptionTypes.BOOLEAN,
           },
+          {
+            name: "ee",
+            description: "Easter Egg",
+            required: false,
+            type: Constants.ApplicationCommandOptionTypes.BOOLEAN,
+          }
         ],
       });
     }
