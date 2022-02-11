@@ -106,7 +106,11 @@ client.on("interactionCreate", async (interaction) => {
 
   commandToRun.runCommand(interaction).catch((errorMsg) => {
     console.log(errorMsg);
-    interaction.editReply(errorMsg.toString());
+    if(interaction.deferred){
+      interaction.editReply(errorMsg.toString());
+    }else{
+      interaction.reply(errorMsg.toString());
+    }
   });
 });
 
