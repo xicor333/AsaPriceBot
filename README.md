@@ -34,14 +34,13 @@ Replies with basic asset info about the token
 | -------- | --------------------- | ------- |
 | asa      | Id or name of the ASA |         |
 
-### Chart
+### Chart (Not complete)
 
-| Argument | Description           | Options                          |
-| -------- | --------------------- | -------------------------------- |
-| asa      | Id or name of the ASA |                                  |
-| dex      | The code of the dex   | TM,T2,HS                         |
-| time     | Timeframe for chart   | 1m,3m,5m,15m,30m,1h,4h,12h,1d,7d |
-| inv      | Inverts the prices    |                                  |
+| Argument | Description           | Options                |
+| -------- | --------------------- | ---------------------- |
+| asa      | Id or name of the ASA |                        |
+| dex      | The code of the dex   | TM,T2,HS               |
+| time     | Timeframe for chart   | 1m,5m,15m,30m,1h,1d,1w |
 
 ### Alert
 

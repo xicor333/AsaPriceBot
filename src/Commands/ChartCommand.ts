@@ -12,6 +12,7 @@ import { Asset, Pool, TimeQuery } from "../tinychart";
 import * as child_process from "child_process";
 import fs from "fs";
 import puppeteer, { Puppeteer, WaitTask } from "puppeteer";
+import canvas from "canvas";
 
 const timeOptions = [
   { name: "1m", value: 1 },
