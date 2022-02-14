@@ -13,14 +13,13 @@ export class PriceCommand extends BasicCommand {
   constructor() {
     super(["tcp", "price"]);
   }
-  async runCommand(interaction: CommandInteraction): Promise<void> {
+  async runCommand(interaction: CommandInteraction): Promise<any> {
     const { commandName, options } = interaction;
 
     const asa: string = options.getString("asa");
     const dex: string | null = options.getString("dex");
     const inv: boolean = options.getBoolean("inv");
 
-    await interaction.deferReply();
     return TinychartAPI.getAsset(asa)
       .then(async (targetAsset) => {
         const provider = this.getProvider(dex, targetAsset);

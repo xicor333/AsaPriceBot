@@ -7,7 +7,7 @@ export class HelpCommand extends BasicCommand {
   checkCommandName(name: string): boolean {
     return this.m_names.includes(name);
   }
-  runCommand(interaction: CommandInteraction): Promise<void> {
+  runCommand(interaction: CommandInteraction): Promise<any> {
     const embed = {
       author:this.getEmbedAuthor(),
       title: "Available Commands",
@@ -21,7 +21,7 @@ export class HelpCommand extends BasicCommand {
       ],
     };
 
-    return interaction.reply({ embeds: [embed] });
+    return interaction.editReply({ embeds: [embed] });
   }
   buildDiscordCommands(): ApplicationCommand[] {
     let cmds = [];

@@ -7,11 +7,10 @@ export class InfoCommand extends BasicCommand {
   constructor() {
     super(["tci", "info"]);
   }
-  async runCommand(interaction: CommandInteraction): Promise<void> {
+  async runCommand(interaction: CommandInteraction): Promise<any> {
     const { commandName, options } = interaction;
     const asa = options.getString("asa");
 
-    await interaction.deferReply();
     return TinychartAPI.getAsset(asa).then((asset) => {
       const icons = this.footerIcons(asset);
       const embed = {

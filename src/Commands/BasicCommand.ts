@@ -87,6 +87,6 @@ export abstract class BasicCommand {
     return {name:"TinyChart",iconUrl:"https://tinychart.org/_next/image?url=%2Fasa-list%2F378382099%2Ficon.png&w=3840&q=75",url:"https://tinychart.org"}
   }
 
-  abstract runCommand(interaction: CommandInteraction): Promise<void>;
+  abstract runCommand(interaction: CommandInteraction): Promise<any>;
   abstract buildDiscordCommands(): ApplicationCommand[];
 }

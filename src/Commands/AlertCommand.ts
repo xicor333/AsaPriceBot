@@ -1,4 +1,4 @@
-import { ApplicationCommand, CommandInteraction, Client } from "discord.js";
+import { ApplicationCommand, CommandInteraction, Client,Message } from "discord.js";
 import { BasicCommand } from "./BasicCommand";
 import { TinychartAPI } from "../tinychartAPI";
 import { Asset, Pool, WSPool } from "../tinychart";
@@ -15,7 +15,7 @@ export class AlertCommand extends BasicCommand {
     this.m_dbManager = dbManager;
     this.m_trackerManager = new AssetTrackerManager(discordClient, dbManager);
   }
-  runCommand(interaction: CommandInteraction): Promise<void> {
+  runCommand(interaction: CommandInteraction): Promise<any> {
     if (interaction.options.getSubcommand() === "add") {
       return this.runAlertAddCommand(interaction);
     } else if (interaction.options.getSubcommand() === "remove") {
@@ -26,7 +26,7 @@ export class AlertCommand extends BasicCommand {
       return this.runAlertListCommand(interaction);
     }
   }
-  async runAlertListCommand(interaction: CommandInteraction): Promise<void> {
+  async runAlertListCommand(interaction: CommandInteraction): Promise<any> {
     const userTargets = this.m_trackerManager.getTargetsForUser(interaction.user.id );
 
     let fields = []
@@ -40,24 +40,23 @@ export class AlertCommand extends BasicCommand {
       title: "List of alerts",
       fields: fields
     }
-    return interaction.reply({embeds:[embed]});
+    return interaction.editReply({embeds:[embed]});
   }
 
-  async runAlertClearCommand(interaction: CommandInteraction): Promise<void> {
+  async runAlertClearCommand(interaction: CommandInteraction): Promise<any> {
     this.m_trackerManager.clearTrackersForUser(interaction.user.id);
     const embed = {
       author:this.getEmbedAuthor(),
       title: `Alerts Cleared`,
       description: `All of your alerts have been cleared`,
     };
-    return interaction.reply({ embeds: [embed] });
+    return interaction.editReply({ embeds: [embed] });
   }
 
-  async runAlertRemoveCommand(interaction: CommandInteraction): Promise<void> {
+  async runAlertRemoveCommand(interaction: CommandInteraction): Promise<any> {
     const { commandName, options } = interaction;
     const asa = options.getString("asa");
 
-    await interaction.deferReply();
     return TinychartAPI.getAsset(asa).then((asset) => {
       this.m_trackerManager.removeTrackerByAsset(asset, interaction.user.id);
       const embed = {
@@ -69,7 +68,7 @@ export class AlertCommand extends BasicCommand {
     });
   }
 
-  async runAlertAddCommand(interaction: CommandInteraction): Promise<void> {
+  async runAlertAddCommand(interaction: CommandInteraction): Promise<any> {
     const { commandName, options } = interaction;
     const asa = options.getString("asa");
     const gt: number | undefined = options.getNumber("gt");
@@ -84,16 +83,15 @@ export class AlertCommand extends BasicCommand {
     };
 
     if ((!gt && !lt) || (gt && lt))
-      return interaction.reply(
+      return interaction.editReply(
         "Invalid parameters, must supply either greater than (gt) or less than (lt) and not both"
       );
 
     if (this.m_dbManager.countUserTargets(interaction.user.id) >= 5)
-      return interaction.reply(
+      return interaction.editReply(
         "No more than 5 alerts can be set at a time. please remove other alerts."
       );
 
-    await interaction.deferReply();
     return TinychartAPI.getAsset(asa).then((asset) =>
       TinychartAPI.getPools(asset, this.getProvider(dex, asset))
         .then((pools) => TinychartAPI.getAlgoPool(pools))

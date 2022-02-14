@@ -95,12 +95,13 @@ client.on("ready", () => {
 
 client.on("interactionCreate", async (interaction) => {
   if (!interaction.isCommand()) return;
-
+  
+  await interaction.deferReply();
   const commandToRun = slashCommands.find((c) =>
     c.checkCommandName(interaction.commandName)
   );
   if (!commandToRun) {
-    interaction.reply("Invalid Command");
+    interaction.editReply("Invalid Command");
     return;
   }
 
@@ -108,8 +109,6 @@ client.on("interactionCreate", async (interaction) => {
     console.log(errorMsg);
     if(interaction.deferred){
       interaction.editReply(errorMsg.toString());
-    }else{
-      interaction.reply(errorMsg.toString());
     }
   });
 });
