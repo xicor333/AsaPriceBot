@@ -36,6 +36,7 @@ export class AlertCommand extends BasicCommand {
       fields.push({name:`${indx++}`,value:`${target.name} @ ${priceStr} `,inline:true})
     }
     let embed = {
+      author:this.getEmbedAuthor(),
       title: "List of alerts",
       fields: fields
     }
@@ -45,6 +46,7 @@ export class AlertCommand extends BasicCommand {
   async runAlertClearCommand(interaction: CommandInteraction): Promise<void> {
     this.m_trackerManager.clearTrackersForUser(interaction.user.id);
     const embed = {
+      author:this.getEmbedAuthor(),
       title: `Alerts Cleared`,
       description: `All of your alerts have been cleared`,
     };
@@ -59,6 +61,7 @@ export class AlertCommand extends BasicCommand {
     return TinychartAPI.getAsset(asa).then((asset) => {
       this.m_trackerManager.removeTrackerByAsset(asset, interaction.user.id);
       const embed = {
+        author:this.getEmbedAuthor(),
         title: `Alert Removed`,
         fields: [{ name: "Asset", value: `${asset.ticker}`, inline: true }],
       };
@@ -98,6 +101,7 @@ export class AlertCommand extends BasicCommand {
           this.m_trackerManager.addAlert(target, asset, pool);
           let priceStr = target.gt !== null ? `>${target.gt}` : `<${target.lt}`;
           const embed = {
+            author:this.getEmbedAuthor(),
             title: `Alert Created`,
             fields: [
               { name: "Asset", value: `${asset.ticker}`, inline: true },

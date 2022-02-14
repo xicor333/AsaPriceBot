@@ -12,7 +12,7 @@ import { Asset, Pool, TimeQuery } from "../tinychart";
 import * as child_process from "child_process";
 import fs from "fs";
 import puppeteer, { Puppeteer, WaitTask } from "puppeteer";
-import canvas from "canvas";
+
 
 const timeOptions = [
   { name: "1m", value: 1 },
@@ -94,12 +94,15 @@ export class ChartCommand extends BasicCommand {
         const file = new MessageAttachment(`${chart.targetAsset.id}.png`);
 
         const embed = {
+          author:this.getEmbedAuthor(),
           title: `${chart.targetAsset.name} - ${time.toUpperCase()}`,
           image: { url: `attachment://${chart.targetAsset.id}.png` },
           url: url,
           footer: {
             text: `From ${
               dex?this.getProviderFromId(dex).name:"Default"
+            }${
+              inv?"(Inv)":""
             }`,
           },
         };

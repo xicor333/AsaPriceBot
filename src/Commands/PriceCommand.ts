@@ -53,6 +53,7 @@ export class PriceCommand extends BasicCommand {
             : priceCalc.toPrecision(4)) + (inv ? " Per " : "");
         const icons = this.footerIcons(info.targetAsset);
         const embed = {
+          author:this.getEmbedAuthor(),
           title: `${info.targetAsset.name}`,
           fields: [
             {

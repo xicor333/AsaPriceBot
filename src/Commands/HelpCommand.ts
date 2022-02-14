@@ -9,6 +9,7 @@ export class HelpCommand extends BasicCommand {
   }
   runCommand(interaction: CommandInteraction): Promise<void> {
     const embed = {
+      author:this.getEmbedAuthor(),
       title: "Available Commands",
       fields: [
         { name: "Help", value: "/help or /tch", inline: true },

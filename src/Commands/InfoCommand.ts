@@ -15,6 +15,7 @@ export class InfoCommand extends BasicCommand {
     return TinychartAPI.getAsset(asa).then((asset) => {
       const icons = this.footerIcons(asset);
       const embed = {
+        author:this.getEmbedAuthor(),
         title: `Info For ${asset.name}`,
         fields: [
           { name: "ID", value: `${asset.id}`, inline: true },
