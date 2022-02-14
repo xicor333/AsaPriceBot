@@ -28,6 +28,7 @@
     "@types/better-sqlite3": "^7.4.2",
     "axios": "^0.25.0",
     "better-sqlite3": "^7.5.0",
+    "canvas": "^2.9.0",
     "cluster": "^0.7.7",
     "discord-api-types": "^0.26.1",
     "discord.js": "^13.6.0",
