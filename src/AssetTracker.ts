@@ -11,6 +11,7 @@ export interface TrackerTarget {
   name?: string;
   asset_id?: number;
   pool_id?: number;
+  hit?:boolean;
 }
 
 export class AssetTracker {
@@ -42,7 +43,8 @@ export class AssetTracker {
     //check to see if any of our targets were reached
     //if so, do callback. will get removed by manager
     for (let i = this.m_targets.length - 1; i >= 0; i--) {
-      if (this.checkTarget(pool, this.m_targets[i])) {
+      if (this.checkTarget(pool, this.m_targets[i]) && !this.m_targets[i].hit) {
+        this.m_targets[i].hit =true;
         this.m_targetReachedCallback(this.m_targets[i], pool.price);
       }
     }
