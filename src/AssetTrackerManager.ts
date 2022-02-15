@@ -107,26 +107,36 @@ export class AssetTrackerManager {
     //remove the tracker from the database as well
   }
   onTrackerReached(target: TrackerTarget, price: number) {
+    let tracker = this.m_assetTrackers.find((t) => t.assetId() === target.asset_id);
+    if(!tracker || !tracker.hasTarget(target.id))
+      return;
+    this.removeTrackerTarget(target.id);
+    this.m_dbManager.removeTargetById(target.id);
     const priceStr = price.toPrecision(4);
         const embed = {
           title: `Price Alert`,
+          footer:{
+            text:`ID: ${target.id}`
+          },
           fields: [
             { name: "User", value: `<@${target.userId}>`, inline: true },
             { name: "Asset", value: `${target.name}`, inline: true },
             { name: "Price", value: `${priceStr}Ⱥ`, inline: true },
           ],
         };
-    this.m_discordClient.channels
+    if(!target.private){
+      this.m_discordClient.channels
       .fetch(target.channelId)
       .then((channel: TextChannel) => {
         channel.send({ embeds: [embed] });
       });
+    }
+    
     this.m_discordClient.users
       .fetch(target.userId)
       .then((user:User)=>{
         user.send({embeds:[embed]});
       })
-    this.removeTrackerTarget(target.id);
-    this.m_dbManager.removeTargetById(target.id);
+    
   }
 }

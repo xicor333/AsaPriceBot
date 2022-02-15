@@ -12,6 +12,7 @@ export interface TrackerTarget {
   asset_id?: number;
   pool_id?: number;
   hit?:boolean;
+  private?:boolean;
 }
 
 export class AssetTracker {

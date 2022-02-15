@@ -22,6 +22,7 @@ export class DBManager {
   updateToLatestVersion() {
     let version = this.getDBVersion();
     if (version < 1) this.updateToV1();
+    if (version < 2) this.updateToV2();
   }
   updateToV1() {
     console.log("update to v1");
@@ -41,11 +42,17 @@ export class DBManager {
     stmt.run();
     this.m_db.pragma("user_version=1");
   }
+  updateToV2(){
+    console.log("Update to v2");
+    const stmt = this.m_db.prepare("ALTER TABLE targets ADD COLUMN private INTEGER");
+    stmt.run();
+    this.m_db.pragma("user_version=2");
+  }
 
   addTarget(target: TrackerTarget) {
     const stmt = this.m_db.prepare(
-      "INSERT INTO targets (user_id,channel_id,gt,lt,dex,asset_id,pool_id,asset_name)" +
-        "VALUES(:user_id,:channel_id,:gt,:lt,:dex,:asset_id,:pool_id,:asset_name)"
+      "INSERT INTO targets (user_id,channel_id,gt,lt,dex,asset_id,pool_id,asset_name,private)" +
+        "VALUES(:user_id,:channel_id,:gt,:lt,:dex,:asset_id,:pool_id,:asset_name,:private)"
     );
     const info = stmt.run({
       user_id: target.userId,
@@ -56,6 +63,7 @@ export class DBManager {
       asset_id: target.asset_id,
       pool_id: target.pool_id,
       asset_name: target.name,
+      private:target.private?1:0
     });
     target.id = <number>info.lastInsertRowid;
   }
@@ -106,7 +114,7 @@ export class DBManager {
   }
   getAllTargets(): TrackerTarget[] {
     const stmt = this.m_db.prepare(
-      "SELECT id,user_id,channel_id,gt,lt,dex,asset_id,pool_id,asset_name FROM targets"
+      "SELECT id,user_id,channel_id,gt,lt,dex,asset_id,pool_id,asset_name,private FROM targets"
     );
     const rows = stmt.all();
     let targets: TrackerTarget[] = [];
@@ -121,6 +129,7 @@ export class DBManager {
         asset_id: row.asset_id,
         pool_id: row.pool_id,
         name: row.asset_name,
+        private:row.private
       });
     }
     return targets;

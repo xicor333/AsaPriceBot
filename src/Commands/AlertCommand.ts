@@ -74,12 +74,14 @@ export class AlertCommand extends BasicCommand {
     const gt: number | undefined = options.getNumber("gt");
     const lt: number | undefined = options.getNumber("lt");
     const dex: string = options.getString("dex");
+    const priv: boolean  = options.getBoolean("private");
     let target: TrackerTarget = {
       userId: interaction.user.id,
       channelId: interaction.channelId,
       gt,
       lt,
       dex,
+      private:priv
     };
 
     if ((!gt && !lt) || (gt && lt))
@@ -107,7 +109,7 @@ export class AlertCommand extends BasicCommand {
             ],
           };
 
-          interaction.editReply({ embeds: [embed] });
+          interaction.editReply({ embeds: [embed]});
         })
     );
   }
@@ -137,6 +139,12 @@ export class AlertCommand extends BasicCommand {
                 required: false,
                 type: Constants.ApplicationCommandOptionTypes.NUMBER,
               },
+              {
+                name:"private",
+                description: "Private (DM Only)",
+                required: false,
+                type:Constants.ApplicationCommandOptionTypes.BOOLEAN,
+              }
             ],
           },
           {
