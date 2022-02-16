@@ -112,6 +112,7 @@ export class ChartCommand extends BasicCommand {
         const file = await getFile(ee);
 
         const embed = {
+          author:this.getEmbedAuthor(),
           title: `${chart.targetAsset.name} - ${time.toUpperCase()}`,
           image: { url: (!ee) ? `attachment://${chart.targetAsset.id}.png` : "attachment://Blapu.png" },
           url: url,

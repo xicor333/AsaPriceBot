@@ -84,7 +84,7 @@ export abstract class BasicCommand {
     return this.m_providers.find((e) => e.id == id);
   }
   getEmbedAuthor():Object{
-    return {name:"TinyChart",iconUrl:"https://tinychart.org/_next/image?url=%2Fasa-list%2F378382099%2Ficon.png&w=3840&q=75",url:"https://tinychart.org"}
+    return {name:"TinyChart",iconURL:"https://i.imgur.com/7sAl9Ux.jpg",url:"https://tinychart.org"}
   }
 
   abstract runCommand(interaction: CommandInteraction): Promise<any>;
