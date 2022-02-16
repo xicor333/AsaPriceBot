@@ -45,18 +45,23 @@ export class AssetTracker {
     //if so, do callback. will get removed by manager
     for (let i = this.m_targets.length - 1; i >= 0; i--) {
       if (this.checkTarget(pool, this.m_targets[i]) && !this.m_targets[i].hit) {
+        console.log("Calling target reached callback "+this.m_targets[i].id+" " +this.m_targets[i].hit)
         this.m_targets[i].hit =true;
+        console.log("Setting hit to true "+this.m_targets[i].hit)
         this.m_targetReachedCallback(this.m_targets[i], pool.price);
       }
     }
   }
   checkTarget(pool: WSPool, target: TrackerTarget): boolean {
     if (target.gt !== null && pool.price > target.gt) {
+      console.log("Target checked: "+target.id+" price> "+pool.price)
       return true;
     }
     if (target.lt !== null && pool.price < target.lt) {
+      console.log("Target checked: "+target.id+" price< "+pool.price)
       return true;
     }
+    return false;
   }
   addTarget(target: TrackerTarget) {
     this.m_targets.push(target);
@@ -65,7 +70,9 @@ export class AssetTracker {
     return this.m_targets.length > 0;
   }
   hasTarget(targetId: number): boolean {
-    return this.m_targets.find((e) => e.id == targetId) != undefined;
+    const t = this.m_targets.find((e) => e.id == targetId);
+    console.log("Has target? "+t+" "+(t!=undefined));
+    return  t!= undefined;
   }
   removeTarget(targetId: number) {
     const indx = this.m_targets.findIndex((e) => e.id == targetId);

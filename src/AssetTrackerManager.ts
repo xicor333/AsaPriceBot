@@ -57,6 +57,7 @@ export class AssetTrackerManager {
   }
 
   private deleteTracker(trackerIndx: number) {
+    console.log("Deleting tracker");
     this.m_assetTrackers[trackerIndx].destroy();
     delete this.m_assetTrackers[trackerIndx];
     this.m_assetTrackers.splice(trackerIndx, 1);
@@ -94,22 +95,32 @@ export class AssetTrackerManager {
   }
   //removes the specified tracker
   removeTrackerTarget(targetId: number) {
+    console.log("Remove tracker target "+targetId)
     //find the tracker that has this tracker id
     const indx = this.m_assetTrackers.findIndex((e) => e.hasTarget(targetId));
     if (indx < 0) throw new Error("Tracker does not exist");
     else {
+      console.log("Target found, removing")
       this.m_assetTrackers[indx].removeTarget(targetId);
       //remove the tracker if it has no targets left
       if (!this.m_assetTrackers[indx].hasTargets()) {
+        console.log("Deleting tracker "+this.m_assetTrackers[indx].m_assetId)
         this.deleteTracker(indx);
       }
     }
     //remove the tracker from the database as well
   }
   onTrackerReached(target: TrackerTarget, price: number) {
+    console.log("Tracker Reached: "+target.id+" Price: "+price);
     let tracker = this.m_assetTrackers.find((t) => t.assetId() === target.asset_id);
-    if(!tracker || !tracker.hasTarget(target.id))
+    if(!tracker)
       return;
+    console.log("Tracker found");
+    
+    if(!tracker.hasTarget(target.id))
+      return;
+    console.log("Target found")
+    
     this.removeTrackerTarget(target.id);
     this.m_dbManager.removeTargetById(target.id);
     const priceStr = price.toPrecision(4);
@@ -129,7 +140,7 @@ export class AssetTrackerManager {
       .fetch(target.channelId)
       .then((channel: TextChannel) => {
         if(channel)
-        channel.send({ embeds: [embed] });
+          channel.send({ embeds: [embed] });
       });
     }
     
@@ -137,7 +148,7 @@ export class AssetTrackerManager {
       .fetch(target.userId)
       .then((user:User)=>{
         if(user)
-        user.send({embeds:[embed]});
+          user.send({embeds:[embed]});
       })
     
   }

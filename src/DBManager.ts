@@ -98,6 +98,7 @@ export class DBManager {
     return targets;
   }
   removeTargetById(target_id: number) {
+    console.log("Removing target from db "+target_id)
     const stmt = this.m_db.prepare("DELETE FROM targets WHERE id=:target_id");
     stmt.run({
       target_id: target_id,
