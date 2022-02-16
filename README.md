@@ -42,7 +42,7 @@ Replies with basic asset info about the token
 | dex      | The code of the dex   | TM,T2,HS               |
 | time     | Timeframe for chart   | 1m,5m,15m,30m,1h,1d,1w |
 | inv      | Invert the chart      |                        |
-| private  | Only send alert in DM |                        |
+
 
 ### Alert
 
@@ -61,6 +61,7 @@ Replies with basic asset info about the token
 | dex      | the code of the dex          | TM,T2,HS |
 | lt       | Alert when the value < input |          |
 | gt       | Alert when value > input     |          |
+| private  | Only send alert in DM        |          |
 
 ###### Remove
 
