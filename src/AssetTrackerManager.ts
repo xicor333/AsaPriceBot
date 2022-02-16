@@ -128,6 +128,7 @@ export class AssetTrackerManager {
       this.m_discordClient.channels
       .fetch(target.channelId)
       .then((channel: TextChannel) => {
+        if(channel)
         channel.send({ embeds: [embed] });
       });
     }
@@ -135,6 +136,7 @@ export class AssetTrackerManager {
     this.m_discordClient.users
       .fetch(target.userId)
       .then((user:User)=>{
+        if(user)
         user.send({embeds:[embed]});
       })
     

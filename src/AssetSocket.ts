@@ -48,9 +48,9 @@ export class AssetSocket {
     this.m_socket.on("ping", () => {
       console.log("recieved ping");
     });
-    this.m_socket.on("pong", () => {
-      console.log("Recieved pong");
-    });
+    // this.m_socket.on("pong", () => {
+      // console.log("Recieved pong");
+    // });
   }
   onMessage(data) {
     const decoded = this.m_decoder.decode(data);
