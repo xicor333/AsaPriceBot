@@ -129,7 +129,7 @@ export class AssetTrackerManager {
       .fetch(target.channelId)
       .then((channel: TextChannel) => {
         if(channel)
-        channel.send({ embeds: [embed] });
+          channel.send({ embeds: [embed] });
       });
     }
     
@@ -137,7 +137,7 @@ export class AssetTrackerManager {
       .fetch(target.userId)
       .then((user:User)=>{
         if(user)
-        user.send({embeds:[embed]});
+          user.send({embeds:[embed]});
       })
     
   }
