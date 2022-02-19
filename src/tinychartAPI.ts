@@ -54,7 +54,7 @@ export module TinychartAPI {
     return runCommand(getSearchNameCmd(name)).then((assets) => {
       //if it returns no assets, respond with an error
       if (!assets || assets.length < 1)
-        throw new Error(`No Asset found for ${name}`);
+        throw new Error(`No Asset found for '${name}'`);
       return assets[0];
     });
   }
