@@ -7,7 +7,7 @@ import {
   Message,
 } from "discord.js";
 import { BasicCommand } from "./BasicCommand";
-import { TinychartAPI } from "../tinychartAPI";
+import { TinychartAPI } from '../tinychartAPI';
 import { Asset, Pool, TimeQuery } from "../tinychart";
 import * as child_process from "child_process";
 import fs from "fs";
@@ -47,7 +47,7 @@ export class ChartCommand extends BasicCommand {
           targetAsset,
           provider
         );
-        return { provider, targetAsset, pools };
+        return { provider, targetAsset, pool:TinychartAPI.getAlgoPool(pools) };
       })
 
       .then(async (chart) => {
@@ -109,16 +109,22 @@ export class ChartCommand extends BasicCommand {
           }
         }
 
+        const priceCalc = inv ? 1 / chart.pool.price : chart.pool.price;
+        let priceStr =
+          (priceCalc >= 10000
+            ? priceCalc.toFixed(0)
+            : priceCalc.toPrecision(4)) + (inv ? " Per " : "");
+
         const file = await getFile(ee);
 
         const embed = {
           author:this.getEmbedAuthor(),
-          title: `${chart.targetAsset.name} - ${time.toUpperCase()}`,
+          title: `${chart.targetAsset.name} - ${time.toUpperCase()} (${priceStr} Ⱥ)`,
           image: { url: (!ee) ? `attachment://${chart.targetAsset.id}.png` : "attachment://Blapu.png" },
           url: url,
           footer: {
             text: `From ${
-              dex?this.getProviderFromId(dex).name:"Default"
+              this.getProviderFromId(chart.provider).name
             }`,
           },
         };
