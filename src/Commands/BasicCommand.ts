@@ -78,7 +78,7 @@ export abstract class BasicCommand {
     // if for some reason we have no providers, go back to default
     if (asset.t2 || asset.T2) return "T2";
     else if (asset.hs || asset.HS) return "HS";
-    return "TM";
+    return "T2";
   }
   getProviderFromId(id: string) {
     return this.m_providers.find((e) => e.id == id);
