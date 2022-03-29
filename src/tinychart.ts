@@ -12,13 +12,13 @@ export interface Asset {
   transactions: number;
   has_clawback: boolean;
   has_freeze: boolean;
-  tm: boolean;
-  t2: boolean;
-  hs: boolean;
 }
 
 export interface Pool {
   id: number;
+  token_id?:number;
+  application_id?:number;
+  provider?:string;
   created_round?: number;
   asset_1_id?: number;
   asset_2_id?: number;
@@ -26,7 +26,13 @@ export interface Pool {
   liquidity?: number;
   address?: string;
   price?: number;
+  price1h?:number;
   price24h?: number;
+  volume_1_24h?: number;
+  volume_2_24h?: number;
+  fee?: number;
+  token_ratio?: number;
+  last_traded?: number;
 }
 
 export interface WSPool {

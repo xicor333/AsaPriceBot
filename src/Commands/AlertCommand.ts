@@ -73,14 +73,14 @@ export class AlertCommand extends BasicCommand {
     const asa = options.getString("asa");
     const gt: number | undefined = options.getNumber("gt");
     const lt: number | undefined = options.getNumber("lt");
-    const dex: string = options.getString("dex");
+    const provider: string = options.getString("dex");
     const priv: boolean  = options.getBoolean("private");
     let target: TrackerTarget = {
       userId: interaction.user.id,
       channelId: interaction.channelId,
       gt,
       lt,
-      dex,
+      dex:provider,
       private:priv
     };
 
@@ -95,8 +95,8 @@ export class AlertCommand extends BasicCommand {
       );
 
     return TinychartAPI.getAsset(asa).then((asset) =>
-      TinychartAPI.getPools(asset, this.getProvider(dex, asset))
-        .then((pools) => TinychartAPI.getAlgoPool(pools))
+      TinychartAPI.getPools(asset)
+        .then((pools) => TinychartAPI.getAlgoPool(pools,provider))
         .then((pool: Pool) => {
           this.m_trackerManager.addAlert(target, asset, pool);
           let priceStr = target.gt !== null ? `>${target.gt}` : `<${target.lt}`;

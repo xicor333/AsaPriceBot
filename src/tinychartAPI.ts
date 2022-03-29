@@ -10,8 +10,8 @@ const baseOpts = {
 };
 
 export module TinychartAPI {
-  export function getPoolsCmd(asset_id, provider_id): string {
-    return encodeURI(TINYCHART_URL + `/asset/${asset_id}/pools/${provider_id}`);
+  export function getPoolsCmd(asset_id): string {
+    return encodeURI(TINYCHART_URL + `/asset/${asset_id}/pools`);
   }
   export function getSearchNameCmd(query_name): string {
     return encodeURI(TINYCHART_URL + `/assets/search?query=${query_name}`);
@@ -58,14 +58,16 @@ export module TinychartAPI {
       return assets[0];
     });
   }
-  export function getPools(asset: Asset, provider: string): Promise<Pool[]> {
-    return runCommand(getPoolsCmd(asset.id, provider));
+  export function getPools(asset: Asset): Promise<Pool[]> {
+    return runCommand(getPoolsCmd(asset.id));
   }
-  export function getAlgoPool(pools: Pool[]): Pool | undefined {
+  export function getAlgoPool(pools: Pool[],provider_id:string): Pool | undefined {
     if (!pools || pools.length < 1) return undefined;
-
-    //find the algo -> asa pool and return the price on that pool
-    return pools.find((p) => !p.asset_2_id);
+    pools.sort((a,b)=>b.liquidity - a.liquidity)
+    if(provider_id)
+      return pools.find((p)=>p.provider==provider_id);
+    else //all pools are now algo pools, return the one that has the highest liquidity (given by tc)
+      return pools[0]
   }
   export function getProviders(): Promise<Provider[]> {
     return runCommand(getProvidersCmd()).then((providers) => {

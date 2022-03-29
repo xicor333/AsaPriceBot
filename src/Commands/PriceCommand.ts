@@ -17,27 +17,32 @@ export class PriceCommand extends BasicCommand {
     const { commandName, options } = interaction;
 
     const asa: string = options.getString("asa");
-    const dex: string | null = options.getString("dex");
+    const provider: string | null = options.getString("dex");
     const inv: boolean = options.getBoolean("inv");
 
     return TinychartAPI.getAsset(asa)
       .then(async (targetAsset) => {
-        const provider = this.getProvider(dex, targetAsset);
         const pools: Pool[] = await TinychartAPI.getPools(
-          targetAsset,
-          provider
+          targetAsset
         );
         return { provider, targetAsset, pools };
       })
       .then((info) => {
         if (!info.pools || info.pools.length < 1)
-          throw new Error(
-            `No pools found for ${info.targetAsset.ticker} on ${
-              this.getProviderFromId(info.provider).name
-            }`
-          );
+          if(provider) {
+            throw new Error(
+              `No pools found for ${info.targetAsset.ticker} on ${
+                this.getProviderFromId(info.provider).name
+              }`
+            );
+          } else {
+            throw new Error(
+              `No pools found for ${info.targetAsset.ticker}`
+            );
+          }
+          
         //find the algo -> asa pool and return the price on that pool
-        const pool = TinychartAPI.getAlgoPool(info.pools);
+        const pool = TinychartAPI.getAlgoPool(info.pools,provider);
         if (!pool) {
           throw new Error(
             `${info.targetAsset.ticker} does not have any algo pools`
@@ -65,7 +70,7 @@ export class PriceCommand extends BasicCommand {
           ],
           footer: {
             text: `From ${
-              this.getProviderFromId(info.provider).name
+              this.getProviderFromId(pool.provider).name
             }\n${icons}`,
           },
         };

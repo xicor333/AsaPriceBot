@@ -36,18 +36,16 @@ export class ChartCommand extends BasicCommand {
 
     const asa: string = options.getString("asa");
     const time: string = options.getString("time");
-    const dex: string | null = options.getString("dex");
+    const provider: string | null = options.getString("dex");
     const inv: boolean = options.getBoolean("inv");
     const ee: boolean = options.getBoolean("ee");
 
     return TinychartAPI.getAsset(asa)
       .then(async (targetAsset) => {
-        const provider = this.getProvider(dex, targetAsset);
         const pools: Pool[] = await TinychartAPI.getPools(
-          targetAsset,
-          provider
+          targetAsset
         );
-        return { provider, targetAsset, pool:TinychartAPI.getAlgoPool(pools) };
+        return { provider, targetAsset, pool:TinychartAPI.getAlgoPool(pools,provider) };
       })
 
       .then(async (chart) => {
@@ -66,13 +64,13 @@ export class ChartCommand extends BasicCommand {
                 args.inv ? "true" : "false"
               },"scale":"linear","candles":100}`;
               localStorage.setItem("tc-chart-config", conf);
-              if (args.dex)
+              if (args.provider)
                 localStorage.setItem(
                   "tc2-provider",
-                  `"${args.dex.toUpperCase()}"`
+                  `"${args.provider.toUpperCase()}"`
                 );
             },
-            { dex, time, inv }
+            { provider, time, inv }
           );
           await page.setViewport({
             width: 1920,
@@ -124,7 +122,7 @@ export class ChartCommand extends BasicCommand {
           url: url,
           footer: {
             text: `From ${
-              this.getProviderFromId(chart.provider).name
+              this.getProviderFromId(chart.pool.provider).name
             }`,
           },
         };
