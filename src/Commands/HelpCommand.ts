@@ -1,5 +1,6 @@
 import { ApplicationCommand, CommandInteraction } from "discord.js";
 import { BasicCommand } from "./BasicCommand";
+const version = "3_29_22"
 export class HelpCommand extends BasicCommand {
   constructor() {
     super(["help", "tch"]);
@@ -19,6 +20,9 @@ export class HelpCommand extends BasicCommand {
         { name: "Chart", value: "/tcc or /chart", inline:true},
         { name: "For More Info", value:"https://github.com/xicor333/AsaPriceBot"}
       ],
+      footer: {
+        text: `Version: ${version}`,
+      },
     };
 
     return interaction.editReply({ embeds: [embed] });
