@@ -1,6 +1,6 @@
 import { ApplicationCommand, CommandInteraction } from "discord.js";
 import { BasicCommand } from "./BasicCommand";
-const version = "3_29_22"
+const version = "3_31_22"
 export class HelpCommand extends BasicCommand {
   constructor() {
     super(["help", "tch"]);

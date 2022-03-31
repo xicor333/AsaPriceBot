@@ -42,10 +42,18 @@ export class ChartCommand extends BasicCommand {
 
     return TinychartAPI.getAsset(asa)
       .then(async (targetAsset) => {
-        const pools: Pool[] = await TinychartAPI.getPools(
-          targetAsset
-        );
-        return { provider, targetAsset, pool:TinychartAPI.getAlgoPool(pools,provider) };
+        const pool: Pool = await TinychartAPI.getPools(targetAsset)
+        .then((pools)=>TinychartAPI.getAlgoPool(pools,provider));
+
+        if(!pool){
+          throw new Error(
+            `No pools found for ${targetAsset.ticker} on ${
+              this.getProviderFromId(provider).name
+            }`);
+        }
+        
+        
+        return { provider, targetAsset, pool};
       })
 
       .then(async (chart) => {
