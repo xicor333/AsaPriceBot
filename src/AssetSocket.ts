@@ -58,14 +58,9 @@ export class AssetSocket {
     this.checkPool(JSON.parse(decoded));
   }
   checkPool(msg: any) {
-    console.log(msg)
     if(msg.type!='r')
       return;
-    console.log(msg.data)
-    console.log(this.m_assetId+" "+this.m_poolId)
     if (msg.data.asset === this.m_assetId && msg.data.pool === this.m_poolId) {
-
-      console.log(msg.data)
       this.m_valueChangeCallback(msg.data);
     }
   }
