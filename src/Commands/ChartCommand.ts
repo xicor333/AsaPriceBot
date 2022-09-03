@@ -36,24 +36,22 @@ export class ChartCommand extends BasicCommand {
 
     const asa: string = options.getString("asa");
     const time: string = options.getString("time");
-    const provider: string | null = options.getString("dex");
+    // const provider: string | null = options.getString("dex");
     const inv: boolean = options.getBoolean("inv");
     const ee: boolean = options.getBoolean("ee");
 
     return TinychartAPI.getAsset(asa)
       .then(async (targetAsset) => {
         const pool: Pool = await TinychartAPI.getPools(targetAsset)
-        .then((pools)=>TinychartAPI.getAlgoPool(pools,provider));
+        .then((pools)=>TinychartAPI.getAlgoPool(pools));
 
         if(!pool){
           throw new Error(
-            `No pools found for ${targetAsset.ticker} on ${
-              this.getProviderFromId(provider).name
-            }`);
+            `No pools found for ${targetAsset.ticker}`);
         }
         
         
-        return { provider, targetAsset, pool};
+        return {targetAsset, pool};
       })
 
       .then(async (chart) => {
@@ -72,13 +70,13 @@ export class ChartCommand extends BasicCommand {
                 args.inv ? "true" : "false"
               },"scale":"linear","candles":100}`;
               localStorage.setItem("tc-chart-config", conf);
-              if (args.provider)
-                localStorage.setItem(
-                  "tc2-provider",
-                  `"${args.provider.toUpperCase()}"`
-                );
+              // if (args.provider)
+              //   localStorage.setItem(
+              //     "tc2-provider",
+              //     `"${args.provider.toUpperCase()}"`
+              //   );
             },
-            { provider, time, inv }
+            { time, inv }
           );
           await page.setViewport({
             width: 1920,
@@ -90,7 +88,7 @@ export class ChartCommand extends BasicCommand {
 
           await page.screenshot({
             path: `${chart.targetAsset.id}.png`,
-            clip: { x: 199, y: 195, width: 1130, height: 820 },
+            clip: { x: 199, y: 240, width: 1015, height: 670 },
           });
 
           await browser.close();
@@ -128,11 +126,6 @@ export class ChartCommand extends BasicCommand {
           title: `${chart.targetAsset.name} - ${time.toUpperCase()} (${priceStr} Ⱥ)`,
           image: { url: (!ee) ? `attachment://${chart.targetAsset.id}.png` : "attachment://Blapu.png" },
           url: url,
-          footer: {
-            text: `From ${
-              this.getProviderFromId(chart.pool.provider).name
-            }`,
-          },
         };
         interaction.editReply({ embeds: [embed], files: [file] });
       });
@@ -163,7 +156,6 @@ export class ChartCommand extends BasicCommand {
               { name: "7d", value: "7d" },
             ],
           },
-          this.dexArgument(),
           {
             name: "inv",
             description: "Invert price",

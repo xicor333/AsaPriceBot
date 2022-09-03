@@ -61,7 +61,7 @@ export module TinychartAPI {
   export function getPools(asset: Asset): Promise<Pool[]> {
     return runCommand(getPoolsCmd(asset.id));
   }
-  export function getAlgoPool(pools: Pool[],provider_id:string): Pool | undefined {
+  export function getAlgoPool(pools: Pool[],provider_id?:string): Pool | undefined {
     if (!pools || pools.length < 1) return undefined;
     pools.sort((a,b)=>b.liquidity - a.liquidity)
     if(provider_id)

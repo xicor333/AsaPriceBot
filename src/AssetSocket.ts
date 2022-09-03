@@ -29,6 +29,7 @@ export class AssetSocket {
     this.m_socket = undefined;
   }
   createSocket() {
+    console.log("Creating Socket: "+this.m_assetId+" "+this.m_poolId)
     this.m_socket = new WebSocket(`${WEBSOCKET_URL}/${this.m_assetId}`, {
       perMessageDeflate: false,
     });
@@ -52,13 +53,20 @@ export class AssetSocket {
       // console.log("Recieved pong");
     // });
   }
-  onMessage(data) {
-    const decoded = this.m_decoder.decode(data);
+  onMessage(msg) {
+    const decoded = this.m_decoder.decode(msg);
     this.checkPool(JSON.parse(decoded));
   }
-  checkPool(data: any) {
-    if (data.asset === this.m_assetId && data.pool === this.m_poolId) {
-      this.m_valueChangeCallback(data);
+  checkPool(msg: any) {
+    console.log(msg)
+    if(msg.type!='r')
+      return;
+    console.log(msg.data)
+    console.log(this.m_assetId+" "+this.m_poolId)
+    if (msg.data.asset === this.m_assetId && msg.data.pool === this.m_poolId) {
+
+      console.log(msg.data)
+      this.m_valueChangeCallback(msg.data);
     }
   }
 }
