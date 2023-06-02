@@ -14,18 +14,18 @@ import fs from "fs";
 import puppeteer, { Puppeteer, WaitTask } from "puppeteer";
 import canvas, { Canvas } from "canvas";
 
-const timeOptions = [
-  { name: "1m", value: 1 },
-  { name: "3m", value: 3 },
-  { name: "5m", value: 5 },
-  { name: "15m", value: 7 },
-  { name: "30m", value: 9 },
-  { name: "1h", value: 2 },
-  { name: "4h", value: 4 },
-  { name: "12h", value: 6 },
-  { name: "1d", value: 8 },
-  { name: "7d", value: 10 },
-];
+// const timeOptions = [
+//   { name: "1m", value: 1 },
+//   { name: "3m", value: 3 },
+//   { name: "5m", value: 5 },
+//   { name: "15m", value: 7 },
+//   { name: "30m", value: 9 },
+//   { name: "1h", value: 2 },
+//   { name: "4h", value: 4 },
+//   { name: "12h", value: 6 },
+//   { name: "1d", value: 8 },
+//   { name: "7d", value: 10 },
+// ];
 
 export class ChartCommand extends BasicCommand {
   constructor() {
@@ -39,6 +39,7 @@ export class ChartCommand extends BasicCommand {
     // const provider: string | null = options.getString("dex");
     const inv: boolean = options.getBoolean("inv");
     const ee: boolean = options.getBoolean("ee");
+    const currency:string = options.getString("currency");
 
     return TinychartAPI.getAsset(asa)
       .then(async (targetAsset) => {
@@ -55,29 +56,18 @@ export class ChartCommand extends BasicCommand {
       })
 
       .then(async (chart) => {
-        const url = `https://tinychart.org/asset/${chart.targetAsset.id}`;
-        const conf = `{"viewType":"${time.toUpperCase()}","ema12":false,"ema26":false,"tooltip":false,"reverse":${
-          inv ? "true" : "false"
-        },"scale":"linear","candles":100}`;
+        const currencyStr = `currency=${currency?currency:"ALGO"}`
+        const invStr = `invert=${inv?"true":"false"}`
+        const adjustStr = `adjust=true`
+        const intervalStr = `interval=${time?time.toUpperCase():"60"}`
+        const toolsStr =`tools=false`
+        const conf = `${currencyStr}&${invStr}&${adjustStr}&${intervalStr}&${toolsStr}`
+        const url = `https://vestige.fi/widget/${chart.targetAsset.id}/chart?${conf}`
+        const url2 = `https://vestige.fi/asset/${chart.targetAsset.id}`
         const Screenshot = async () => {
           const browser = await puppeteer.launch({ headless: true });
 
           const page = await browser.newPage();
-          await page.evaluateOnNewDocument(
-            (args) => {
-              localStorage.clear();
-              const conf = `{"viewType":"${args.time.toUpperCase()}","ema12":false,"ema26":false,"tooltip":false,"reverse":${
-                args.inv ? "true" : "false"
-              },"scale":"linear","candles":100}`;
-              localStorage.setItem("tc-chart-config", conf);
-              // if (args.provider)
-              //   localStorage.setItem(
-              //     "tc2-provider",
-              //     `"${args.provider.toUpperCase()}"`
-              //   );
-            },
-            { time, inv }
-          );
           await page.setViewport({
             width: 1920,
             height: 1080,
@@ -88,7 +78,7 @@ export class ChartCommand extends BasicCommand {
 
           await page.screenshot({
             path: `${chart.targetAsset.id}.png`,
-            clip: { x: 199, y: 240, width: 1015, height: 670 },
+            clip: { x: 0, y: 0, width: 1920, height:1080 },
           });
 
           await browser.close();
@@ -105,7 +95,7 @@ export class ChartCommand extends BasicCommand {
             const background = await canvas.loadImage(`./${chart.targetAsset.id}.png`);
             context.drawImage(background, 0, 0, newImage.width, newImage.height);
             const foreground = await canvas.loadImage("./EasterEgg.png");
-            context.drawImage(foreground,0, 160, 660, 660);
+            context.drawImage(foreground,0, 415, 400, 400);
             return new MessageAttachment(newImage.toBuffer(), `Blapu.png`);
           }
           else{
@@ -125,7 +115,7 @@ export class ChartCommand extends BasicCommand {
           author:this.getEmbedAuthor(),
           title: `${chart.targetAsset.name} - ${time.toUpperCase()} (${priceStr} Ⱥ)`,
           image: { url: (!ee) ? `attachment://${chart.targetAsset.id}.png` : "attachment://Blapu.png" },
-          url: url,
+          url: url2,
         };
         interaction.editReply({ embeds: [embed], files: [file] });
       });
@@ -144,16 +134,19 @@ export class ChartCommand extends BasicCommand {
             required: true,
             type: Constants.ApplicationCommandOptionTypes.STRING,
             choices: [
-              { name: "1m", value: "1m" },
-              { name: "3m", value: "3m" },
-              { name: "5m", value: "5m" },
-              { name: "15m", value: "15m" },
-              { name: "30m", value: "30m" },
-              { name: "1h", value: "1h" },
-              { name: "4h", value: "4h" },
-              { name: "12h", value: "12h" },
-              { name: "1d", value: "1d" },
-              { name: "7d", value: "7d" },
+              { name: "1m", value: "1" },
+              { name: "3m", value: "3" },
+              { name: "5m", value: "5" },
+              { name: "15m", value: "15" },
+              { name: "30m", value: "30" },
+              { name: "45m", value: "45" },
+              { name: "1h", value: "60" },
+              { name: "2h", value: "120" },
+              { name: "3h", value: "180" },
+              { name: "4h", value: "240" },
+              { name: "1d", value: "1D" },
+              { name: "1w", value: "1W" },
+              { name: "1mo", value: "1M" },
             ],
           },
           {
@@ -161,6 +154,19 @@ export class ChartCommand extends BasicCommand {
             description: "Invert price",
             required: false,
             type: Constants.ApplicationCommandOptionTypes.BOOLEAN,
+          },
+          {
+            name: "currency",
+            description: "Display currency",
+            required: false,
+            type: Constants.ApplicationCommandOptionTypes.STRING,
+            choices: [
+              { name: "algo", value: "ALGO" },
+              { name: "usd", value: "USD" },
+              { name: "eur", value: "EUR" },
+              { name: "gbp", value: "GBP" },
+              { name: "btc", value: "BTC" },
+            ],
           },
           {
             name: "ee",
